@@ -8,6 +8,7 @@ import { AlphaVantageClient, CoinGeckoClient, ExchangeRateClient, NewsAPIClient,
 import { RedisCache } from '../infrastructure/cache/index.js';
 import { AuditLogRepository } from '../infrastructure/repositories/index.js';
 import { SocketManager } from '../infrastructure/websocket/index.js';
+import { MessageQueue } from '../infrastructure/messaging/index.js';
 import { OrchestrateFinancialData } from '../application/use-cases/index.js';
 import { HealthController, FinancialController, AdminController, StatusController } from '../presentation/controllers/index.js';
 import { logger } from '../config/logger.js';

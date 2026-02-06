@@ -52,6 +52,10 @@ const envSchema = z.object({
   // Feature Flags
   ENABLE_CACHE_WARMING: z.string().transform(v => v === 'true').default('false'),
   ENABLE_METRICS_COLLECTION: z.string().transform(v => v === 'true').default('true'),
+
+  // RabbitMQ
+  RABBITMQ_URL: z.string().default('amqp://localhost:5672'),
+  RABBITMQ_QUEUE_PREFIX: z.string().default('globalfi'),
 });
 
 /**
@@ -59,13 +63,13 @@ const envSchema = z.object({
  */
 const parseEnv = () => {
   const result = envSchema.safeParse(process.env);
-  
+
   if (!result.success) {
     console.error('❌ Invalid environment variables:');
     console.error(result.error.format());
     process.exit(1);
   }
-  
+
   return result.data;
 };
 
@@ -86,18 +90,18 @@ export const config = {
     isProd: env.NODE_ENV === 'production',
     isTest: env.NODE_ENV === 'test',
   },
-  
+
   database: {
     uri: env.MONGODB_URI,
     poolSize: env.MONGODB_POOL_SIZE,
   },
-  
+
   redis: {
     url: env.REDIS_URL,
     password: env.REDIS_PASSWORD,
     ttlDefault: env.REDIS_TTL_DEFAULT,
   },
-  
+
   apiKeys: {
     alphaVantage: env.ALPHA_VANTAGE_API_KEY,
     coinGecko: env.COINGECKO_API_KEY,
@@ -105,31 +109,36 @@ export const config = {
     fred: env.FRED_API_KEY,
     finnhub: env.FINNHUB_API_KEY,
   },
-  
+
   security: {
     corsOrigins: env.CORS_ORIGIN.split(',').map(s => s.trim()),
     rateLimitWindowMs: env.RATE_LIMIT_WINDOW_MS,
     rateLimitMaxRequests: env.RATE_LIMIT_MAX_REQUESTS,
   },
-  
+
   circuitBreaker: {
     threshold: env.CIRCUIT_BREAKER_THRESHOLD,
     timeout: env.CIRCUIT_BREAKER_TIMEOUT,
     resetTimeout: env.CIRCUIT_BREAKER_RESET_TIMEOUT,
   },
-  
+
   logging: {
     level: env.LOG_LEVEL,
     filePath: env.LOG_FILE_PATH,
   },
-  
+
   socketIo: {
     corsOrigins: env.SOCKET_IO_CORS_ORIGIN.split(',').map(s => s.trim()),
   },
-  
+
   features: {
     cacheWarming: env.ENABLE_CACHE_WARMING,
     metricsCollection: env.ENABLE_METRICS_COLLECTION,
+  },
+
+  rabbitmq: {
+    url: env.RABBITMQ_URL,
+    queuePrefix: env.RABBITMQ_QUEUE_PREFIX,
   },
 
   /** Cache TTLs per API source (in seconds) */

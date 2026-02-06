@@ -8,7 +8,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 
-import { config, logger, connectDatabase, closeDatabaseConnection, connectRedis, closeRedisConnection, flushLogger } from './config/index.js';
+import { config, logger, connectDatabase, closeDatabaseConnection, connectRedis, closeRedisConnection, connectRabbitMQ, closeRabbitMQConnection, flushLogger } from './config/index.js';
 import { getContainer } from './di/container.js';
 import {
     requestIdMiddleware,
@@ -107,6 +107,10 @@ const setupGracefulShutdown = (server, container) => {
             await closeRedisConnection();
             logger.info('Redis connection closed');
 
+            // Close RabbitMQ
+            await closeRabbitMQConnection();
+            logger.info('RabbitMQ connection closed');
+
             // Flush logs
             await flushLogger();
 
@@ -142,9 +146,10 @@ const startServer = async () => {
     try {
         logger.info('Starting Global-Fi Ultra...');
 
-        // Connect to databases
+        // Connect to databases and message queue
         await connectDatabase();
         await connectRedis();
+        await connectRabbitMQ();
 
         // Create Express app
         const app = createApp();

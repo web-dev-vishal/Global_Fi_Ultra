@@ -26,7 +26,8 @@
     "redis:export": "node src/tools/redisMonitor.js --export ./cache-export.json",
     "redis:health": "node src/tools/redisMonitor.js --health",
     "ai:demo": "node examples/test-ai-features.js",
-    "ai:integrate": "node examples/integrate-ai.js"
+    "ai:integrate": "node examples/integrate-ai.js",
+    "test:integration": "node test-integration.js"
   },
   "dependencies": {
     "amqplib": "^0.10.9",

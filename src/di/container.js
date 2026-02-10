@@ -33,6 +33,15 @@ import {
     AssetController
 } from '../presentation/controllers/index.js';
 import { logger } from '../config/logger.js';
+import { config } from '../config/environment.js';
+
+// AI Infrastructure
+import { GroqClient } from '../infrastructure/ai/groqClient.js';
+import { AINewsService } from '../application/services/AINewsService.js';
+import { AIMarketService } from '../application/services/AIMarketService.js';
+import { AIStreamHandler } from '../infrastructure/websocket/AIStreamHandler.js';
+import { AIJobQueue } from '../infrastructure/messaging/AIJobQueue.js';
+import { AIController } from '../presentation/controllers/AIController.js';
 
 /**
  * DI Container
@@ -41,6 +50,7 @@ export class Container {
     constructor() {
         this.instances = new Map();
         this.socketManager = null;
+        this.aiStreamHandler = null;
     }
 
     /**
@@ -92,6 +102,90 @@ export class Container {
 
         // Socket Manager
         this.socketManager = new SocketManager(io);
+
+        // AI Infrastructure (only if API key is configured)
+        let groqClient = null;
+        let aiNewsService = null;
+        let aiMarketService = null;
+        let aiJobQueue = null;
+        let aiController = null;
+
+        if (config.ai.groqApiKey && config.ai.groqApiKey !== '') {
+            try {
+                logger.info('Initializing AI services...');
+
+                // Initialize Groq client
+                groqClient = new GroqClient({
+                    apiKey: config.ai.groqApiKey,
+                    cacheService: cache,
+                    logger
+                });
+
+                // Validate API key
+                await groqClient.validateApiKey();
+                logger.info('✅ Groq API key validated');
+
+                // Initialize AI services
+                aiNewsService = new AINewsService({
+                    groqClient,
+                    cacheService: cache
+                });
+
+                aiMarketService = new AIMarketService({
+                    groqClient,
+                    cacheService: cache
+                });
+
+                // Initialize AI stream handler
+                this.aiStreamHandler = new AIStreamHandler({
+                    io,
+                    groqClient,
+                    aiNewsService,
+                    aiMarketService
+                });
+                this.aiStreamHandler.initialize();
+                logger.info('✅ AI WebSocket handler initialized');
+
+                // Initialize job queue (optional - RabbitMQ might not be available)
+                try {
+                    aiJobQueue = new AIJobQueue({
+                        aiNewsService,
+                        aiMarketService
+                    });
+                    await aiJobQueue.connect();
+                    await aiJobQueue.startConsumers();
+                    logger.info('✅ AI job queue initialized');
+                } catch (queueError) {
+                    logger.warn('⚠️  AI job queue not available (RabbitMQ not connected)', {
+                        error: queueError.message
+                    });
+                    aiJobQueue = null;
+                }
+
+                // Initialize AI controller
+                aiController = new AIController({
+                    aiNewsService,
+                    aiMarketService,
+                    aiJobQueue
+                });
+
+                logger.info('✅ AI services initialized successfully');
+            } catch (error) {
+                logger.error('❌ Failed to initialize AI services', {
+                    error: error.message
+                });
+                logger.warn('⚠️  AI features will be disabled');
+                // Set all to null if initialization fails
+                groqClient = null;
+                aiNewsService = null;
+                aiMarketService = null;
+                aiJobQueue = null;
+                aiController = null;
+                this.aiStreamHandler = null;
+            }
+        } else {
+            logger.info('ℹ️  AI features disabled (GROQ_API_KEY not configured)');
+        }
 
         // Use Cases
         const orchestrateFinancialData = new OrchestrateFinancialData({
@@ -153,6 +247,13 @@ export class Container {
         this.instances.set('alertController', alertController);
         this.instances.set('assetController', assetController);
 
+        // Store AI instances (may be null if not configured)
+        this.instances.set('groqClient', groqClient);
+        this.instances.set('aiNewsService', aiNewsService);
+        this.instances.set('aiMarketService', aiMarketService);
+        this.instances.set('aiJobQueue', aiJobQueue);
+        this.instances.set('aiController', aiController);
+
         logger.info('DI Container initialized');
     }
 
@@ -171,6 +272,32 @@ export class Container {
      */
     getSocketManager() {
         return this.socketManager;
+    }
+
+    /**
+     * Get AI Stream Handler
+     * @returns {AIStreamHandler|null}
+     */
+    getAIStreamHandler() {
+        return this.aiStreamHandler;
+    }
+
+    /**
+     * Check if AI is enabled
+     * @returns {boolean}
+     */
+    isAIEnabled() {
+        return this.instances.get('aiController') !== null;
+    }
+
+    /**
+     * Close AI job queue
+     */
+    async closeAIJobQueue() {
+        const aiJobQueue = this.instances.get('aiJobQueue');
+        if (aiJobQueue) {
+            await aiJobQueue.close();
+        }
     }
 }
 

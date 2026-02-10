@@ -28,6 +28,7 @@ import {
     createAlertRoutes,
     createAssetRoutes,
 } from './presentation/routes/index.js';
+import { createAIRoutes } from './presentation/routes/aiRoutes.js';
 
 /**
  * Create and configure Express app
@@ -73,6 +74,15 @@ const setupRoutes = (app, container) => {
     app.use('/api/v1/alerts', createAlertRoutes(container.get('alertController')));
     app.use('/api/v1/assets', createAssetRoutes(container.get('assetController')));
 
+    // AI routes (if enabled)
+    const aiController = container.get('aiController');
+    if (aiController) {
+        app.use('/api/v1/ai', createAIRoutes(aiController));
+        logger.info('✅ AI routes mounted at /api/v1/ai');
+    } else {
+        logger.info('ℹ️  AI routes not mounted (AI features disabled)');
+    }
+
     // Error handlers
     app.use(notFoundHandler);
     app.use(errorHandler);
@@ -108,6 +118,10 @@ const setupGracefulShutdown = (server, container) => {
                 await socketManager.close();
                 logger.info('Socket.io closed');
             }
+
+            // Close AI job queue
+            await container.closeAIJobQueue();
+            logger.info('AI job queue closed');
 
             // Close MongoDB
             await closeDatabaseConnection();
@@ -191,6 +205,15 @@ const startServer = async () => {
             logger.info(`🚀 Global-Fi Ultra running on http://${config.server.host}:${config.server.port}`);
             logger.info(`   Environment: ${config.server.nodeEnv}`);
             logger.info(`   Health check: http://${config.server.host}:${config.server.port}/health`);
+            
+            // Log AI status
+            if (container.isAIEnabled()) {
+                logger.info(`   ✅ AI Features: ENABLED`);
+                logger.info(`   🤖 AI Endpoints: http://${config.server.host}:${config.server.port}/api/v1/ai/*`);
+                logger.info(`   🔌 AI WebSocket: ws://${config.server.host}:${config.server.port}`);
+            } else {
+                logger.info(`   ℹ️  AI Features: DISABLED (configure GROQ_API_KEY to enable)`);
+            }
         });
     } catch (error) {
         logger.error('Failed to start server', { error: error.message, stack: error.stack });

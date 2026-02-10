@@ -778,33 +778,6 @@ npm run lint:fix   # Fix code style issues
 
 ---
 
-## Frontend Integration
-
-### Recommended Chart Libraries
-
-- TradingView Lightweight Charts (financial data)
-- Recharts (React-friendly)
-- Chart.js (simple and clean)
-- D3.js (custom visualizations)
-- ApexCharts (beautiful defaults)
-
-### Connection Status Display
-
-Show users their connection state:
-- Green: Connected, receiving updates
-- Yellow: Connecting/reconnecting
-- Red: Disconnected, using cached data
-- Gray: Not connected (offline mode)
-
-### Error Handling
-
-Display user-friendly messages:
-- "Reconnecting..." when WebSocket drops
-- "Data temporarily unavailable" for API errors
-- "Too many requests, please wait" for rate limits
-
----
-
 ## Security
 
 ### Best Practices

@@ -1,7 +1,7 @@
 # Test All Endpoints Script (PowerShell)
 # Tests all Global-Fi Ultra API endpoints
 
-$BaseUrl = "http://localhost:3000"
+$BaseUrl = "http://localhost:4000"
 $Total = 0
 $Passed = 0
 $Failed = 0

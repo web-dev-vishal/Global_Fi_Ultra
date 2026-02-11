@@ -26,7 +26,9 @@
     "redis:export": "node src/tools/redisMonitor.js --export ./cache-export.json",
     "redis:health": "node src/tools/redisMonitor.js --health",
     "ai:demo": "node examples/test-ai-features.js",
-    "ai:integrate": "node examples/integrate-ai.js"
+    "ai:integrate": "node examples/integrate-ai.js",
+    "test:endpoints": "bash test-all-endpoints.sh",
+    "test:endpoints:win": "powershell -ExecutionPolicy Bypass -File test-all-endpoints.ps1"
   },
   "dependencies": {
     "amqplib": "^0.10.9",

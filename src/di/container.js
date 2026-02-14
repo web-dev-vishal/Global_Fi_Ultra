@@ -16,12 +16,12 @@ import {
 import { SocketManager } from '../infrastructure/websocket/index.js';
 import { MessageQueue } from '../infrastructure/messaging/index.js';
 import {
-    OrchestrateFinancialData,
-    ManageUser,
-    ManageWatchlist,
-    ManageAlert,
-    ManageFinancialAsset
-} from '../application/use-cases/index.js';
+    FinancialDataService,
+    UserService,
+    WatchlistService,
+    AlertService,
+    AssetService
+} from '../services/index.js';
 import {
     HealthController,
     FinancialController,
@@ -31,17 +31,17 @@ import {
     WatchlistController,
     AlertController,
     AssetController
-} from '../presentation/controllers/index.js';
+} from '../controllers/index.js';
 import { logger } from '../config/logger.js';
 import { config } from '../config/environment.js';
 
 // AI Infrastructure
 import { GroqClient } from '../infrastructure/ai/groqClient.js';
-import { AINewsService } from '../application/services/AINewsService.js';
-import { AIMarketService } from '../application/services/AIMarketService.js';
+import { AINewsService } from '../services/AINewsService.js';
+import { AIMarketService } from '../services/AIMarketService.js';
 import { AIStreamHandler } from '../infrastructure/websocket/AIStreamHandler.js';
 import { AIJobQueue } from '../infrastructure/messaging/AIJobQueue.js';
-import { AIController } from '../presentation/controllers/AIController.js';
+import { AIController } from '../controllers/AIController.js';
 
 /**
  * DI Container
@@ -187,8 +187,8 @@ export class Container {
             logger.info('ℹ️  AI features disabled (GROQ_API_KEY not configured)');
         }
 
-        // Use Cases
-        const orchestrateFinancialData = new OrchestrateFinancialData({
+        // Services
+        const financialDataService = new FinancialDataService({
             alphaVantageClient,
             coinGeckoClient,
             exchangeRateClient,
@@ -199,15 +199,15 @@ export class Container {
             auditLogRepository,
         });
 
-        const manageUser = new ManageUser({ userRepository });
-        const manageWatchlist = new ManageWatchlist({ watchlistRepository });
-        const manageAlert = new ManageAlert({ alertRepository });
-        const manageFinancialAsset = new ManageFinancialAsset({ financialAssetRepository });
+        const userService = new UserService({ userRepository });
+        const watchlistService = new WatchlistService({ watchlistRepository });
+        const alertService = new AlertService({ alertRepository });
+        const assetService = new AssetService({ financialAssetRepository });
 
         // Controllers
         const healthController = new HealthController();
         const financialController = new FinancialController({
-            orchestrateFinancialData,
+            financialDataService,
             socketManager: this.socketManager,
         });
         const adminController = new AdminController({
@@ -217,12 +217,12 @@ export class Container {
         const statusController = new StatusController({
             apiClients,
         });
-        const userController = new UserController({ manageUser });
-        const watchlistController = new WatchlistController({ manageWatchlist });
-        const alertController = new AlertController({ manageAlert });
+        const userController = new UserController({ userService });
+        const watchlistController = new WatchlistController({ watchlistService });
+        const alertController = new AlertController({ alertService });
         const assetController = new AssetController({
-            manageFinancialAsset,
-            orchestrateFinancialData,
+            assetService,
+            financialDataService,
         });
 
         // Store instances
@@ -233,11 +233,11 @@ export class Container {
         this.instances.set('watchlistRepository', watchlistRepository);
         this.instances.set('alertRepository', alertRepository);
         this.instances.set('apiClients', apiClients);
-        this.instances.set('orchestrateFinancialData', orchestrateFinancialData);
-        this.instances.set('manageUser', manageUser);
-        this.instances.set('manageWatchlist', manageWatchlist);
-        this.instances.set('manageAlert', manageAlert);
-        this.instances.set('manageFinancialAsset', manageFinancialAsset);
+        this.instances.set('financialDataService', financialDataService);
+        this.instances.set('userService', userService);
+        this.instances.set('watchlistService', watchlistService);
+        this.instances.set('alertService', alertService);
+        this.instances.set('assetService', assetService);
         this.instances.set('healthController', healthController);
         this.instances.set('financialController', financialController);
         this.instances.set('adminController', adminController);

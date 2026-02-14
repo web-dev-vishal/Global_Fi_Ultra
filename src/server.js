@@ -18,7 +18,7 @@ import {
     securityHeaders,
     corsMiddleware,
     requestLogger,
-} from './presentation/middleware/index.js';
+} from './middleware/index.js';
 import {
     createHealthRoutes,
     createFinancialRoutes,
@@ -28,8 +28,8 @@ import {
     createWatchlistRoutes,
     createAlertRoutes,
     createAssetRoutes,
-} from './presentation/routes/index.js';
-import { createAIRoutes } from './presentation/routes/aiRoutes.js';
+} from './routes/index.js';
+import { createAIRoutes } from './routes/aiRoutes.js';
 
 /**
  * Create and configure Express app

@@ -2,7 +2,7 @@
  * Global-Fi Ultra - Money Value Object Tests
  */
 
-import { Money } from '../../src/domain/value-objects/Money.js';
+import { Money } from '../../src/utils/valueObjects.js';
 
 describe('Money', () => {
     describe('constructor', () => {

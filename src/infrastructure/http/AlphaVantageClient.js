@@ -7,8 +7,8 @@
 
 import { BaseApiClient } from './BaseApiClient.js';
 import { config } from '../../config/environment.js';
-import { ValidationError } from '../../core/errors/index.js';
-import { Money, Percentage } from '../../domain/value-objects/index.js';
+import { ValidationError } from '../../utils/errors.js';
+import { Money, Percentage } from '../../utils/valueObjects.js';
 
 /**
  * Alpha Vantage API client for stock data

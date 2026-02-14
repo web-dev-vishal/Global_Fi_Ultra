@@ -8,7 +8,7 @@
 import axios from 'axios';
 import { configureRetry } from '../resilience/RetryStrategy.js';
 import { CircuitBreaker } from '../resilience/CircuitBreaker.js';
-import { ExternalAPIError } from '../../core/errors/index.js';
+import { ExternalAPIError } from '../../utils/errors.js';
 import { logger } from '../../config/logger.js';
 
 /**

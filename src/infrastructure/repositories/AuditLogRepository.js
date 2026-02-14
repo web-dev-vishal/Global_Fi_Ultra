@@ -6,7 +6,7 @@
 
 import { AuditLog } from '../../models/AuditLog.js';
 import { logger } from '../../config/logger.js';
-import { DatabaseError } from '../../core/errors/index.js';
+import { DatabaseError } from '../../utils/errors.js';
 
 /**
  * Audit log repository

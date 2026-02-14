@@ -7,7 +7,7 @@
 
 import { logger } from '../../config/logger.js';
 import { config } from '../../config/environment.js';
-import { CircuitBreakerError } from '../../core/errors/index.js';
+import { CircuitBreakerError } from '../../utils/errors.js';
 
 /**
  * Circuit Breaker States

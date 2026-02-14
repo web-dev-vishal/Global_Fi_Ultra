@@ -7,7 +7,7 @@
 
 import { BaseApiClient } from './BaseApiClient.js';
 import { config } from '../../config/environment.js';
-import { ValidationError } from '../../core/errors/index.js';
+import { ValidationError } from '../../utils/errors.js';
 
 /**
  * Finnhub API client for market news

@@ -9,14 +9,20 @@ import { config } from './environment.js';
 import { logger } from './logger.js';
 
 let redisClient = null;
+let isRedisAvailable = false;
 
 /**
  * Create and configure Redis client
- * @returns {Redis}
+ * @returns {Redis|null}
  */
 export const createRedisClient = () => {
     if (redisClient) {
         return redisClient;
+    }
+
+    if (!config.redis.url) {
+        logger.warn('⚠️ REDIS_URL not configured - Redis features will be disabled');
+        return null;
     }
 
     const options = {
@@ -24,6 +30,14 @@ export const createRedisClient = () => {
         retryDelayOnFailover: 100,
         enableReadyCheck: true,
         lazyConnect: true,
+        retryStrategy(times) {
+            if (times > 3) {
+                logger.warn('⚠️ Redis max retries reached - disabling Redis');
+                return null; // Stop retrying
+            }
+            const delay = Math.min(times * 50, 2000);
+            return delay;
+        },
     };
 
     // Add password if provided
@@ -38,14 +52,17 @@ export const createRedisClient = () => {
     });
 
     redisClient.on('ready', () => {
+        isRedisAvailable = true;
         logger.info('✅ Redis client ready');
     });
 
     redisClient.on('error', (err) => {
-        logger.error('❌ Redis client error', { error: err.message });
+        isRedisAvailable = false;
+        logger.error('❌ Redis client error', { error: err.message || String(err) });
     });
 
     redisClient.on('close', () => {
+        isRedisAvailable = false;
         logger.warn('⚠️ Redis connection closed');
     });
 
@@ -58,17 +75,42 @@ export const createRedisClient = () => {
 
 /**
  * Connect to Redis
- * @returns {Promise<Redis>}
+ * @returns {Promise<Redis|null>}
  */
 export const connectRedis = async () => {
+    
+    if (!config.redis.url) {
+        logger.warn('⚠️ REDIS_URL not set - running without cache');
+        return null;
+    }
+
     const client = createRedisClient();
+    
+    if (!client) {
+        return null;
+    }
 
     try {
         await client.connect();
+        isRedisAvailable = true;
+        logger.info('✅ Redis connected successfully');
         return client;
     } catch (error) {
-        logger.error('❌ Failed to connect to Redis', { error: error.message });
-        throw error;
+        isRedisAvailable = false;
+        logger.warn('⚠️ Failed to connect to Redis - continuing without cache', { 
+            error: error.message || String(error) 
+        });
+        
+        // Clean up failed client
+        if (client) {
+            try {
+                client.disconnect();
+            } catch (e) {
+                // Ignore cleanup errors
+            }
+        }
+        redisClient = null;
+        return null;
     }
 };
 
@@ -90,9 +132,11 @@ export const closeRedisConnection = async () => {
             await redisClient.quit();
             logger.info('Redis connection closed gracefully');
             redisClient = null;
+            isRedisAvailable = false;
         } catch (error) {
             logger.error('Error closing Redis connection', { error: error.message });
-            throw error;
+            redisClient = null;
+            isRedisAvailable = false;
         }
     }
 };
@@ -102,7 +146,7 @@ export const closeRedisConnection = async () => {
  * @returns {boolean}
  */
 export const isRedisConnected = () => {
-    return redisClient?.status === 'ready';
+    return redisClient?.status === 'ready' && isRedisAvailable;
 };
 
 export default {

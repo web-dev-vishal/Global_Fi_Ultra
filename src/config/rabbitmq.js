@@ -15,41 +15,51 @@ let channel = null;
  * Connect to RabbitMQ with retry logic
  */
 export const connectRabbitMQ = async (retries = 5, delay = 3000) => {
+    // Skip connection if no real RabbitMQ URL is configured
+    // (avoids 15s of pointless retry delays on Render/production)
+    const url = config.rabbitmq.url;
+    if (!url || url === 'amqp://localhost:5672' || url === 'amqp://localhost') {
+        if (process.env.NODE_ENV === 'production') {
+            logger.info('RabbitMQ URL not configured — skipping connection (async AI jobs disabled)');
+            return null;
+        }
+    }
+
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             logger.info(`Connecting to RabbitMQ (attempt ${attempt}/${retries})...`);
-            
+
             connection = await amqp.connect(config.rabbitmq.url);
             channel = await connection.createChannel();
-            
+
             // Handle connection errors
             connection.on('error', (err) => {
                 logger.error('RabbitMQ connection error', { error: err.message });
             });
-            
+
             connection.on('close', () => {
                 logger.warn('RabbitMQ connection closed');
                 channel = null;
                 connection = null;
             });
-            
+
             // Assert default queues
             const prefix = config.rabbitmq.queuePrefix;
             await channel.assertQueue(`${prefix}-financial-data`, { durable: true });
             await channel.assertQueue(`${prefix}-audit-logs`, { durable: true });
             await channel.assertQueue(`${prefix}-notifications`, { durable: true });
-            
+
             logger.info('RabbitMQ connection established');
             return { connection, channel };
         } catch (error) {
-            logger.error(`RabbitMQ connection failed (attempt ${attempt}/${retries})`, { 
-                error: error.message 
+            logger.error(`RabbitMQ connection failed (attempt ${attempt}/${retries})`, {
+                error: error.message
             });
-            
+
             if (attempt === retries) {
                 throw new Error(`Failed to connect to RabbitMQ after ${retries} attempts: ${error.message}`);
             }
-            
+
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }

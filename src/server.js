@@ -112,12 +112,12 @@ const setupGracefulShutdown = (server, container) => {
 
         // Stop accepting new connections
         server.close(() => {
-            safeLog('info', 'HTTP server closed'); // ✅ Use safeLog
+            safeLog('info', 'HTTP server closed');
         });
 
         // Set timeout for force shutdown
         const forceShutdownTimer = setTimeout(() => {
-            console.error('Forced shutdown after timeout'); // ✅ Use console directly
+            console.error('Forced shutdown after timeout');
             process.exit(1);
         }, 15000);
 
@@ -126,33 +126,36 @@ const setupGracefulShutdown = (server, container) => {
             const socketManager = container.getSocketManager();
             if (socketManager) {
                 await socketManager.close();
-                safeLog('info', 'Socket.io closed'); // ✅ Use safeLog
+                safeLog('info', 'Socket.io closed');
             }
 
             // Close AI job queue
             await container.closeAIJobQueue();
-            safeLog('info', 'AI job queue closed'); // ✅ Use safeLog
+            safeLog('info', 'AI job queue closed');
 
             // Close MongoDB
             await closeDatabaseConnection();
-            safeLog('info', 'MongoDB connection closed'); // ✅ Use safeLog
+            safeLog('info', 'MongoDB connection closed');
 
-            // Close Redis
-            await closeRedisConnection();
-            safeLog('info', 'Redis connection closed'); // ✅ Use safeLog
+            try {
+                await closeRedisConnection();
+                safeLog('info', 'Redis connection closed');
+            } catch (error) {
+                safeLog('warn', 'Redis already disconnected or not available');
+            }
 
             // Close RabbitMQ
             await closeRabbitMQConnection();
-            safeLog('info', 'RabbitMQ connection closed'); // ✅ Use safeLog
+            safeLog('info', 'RabbitMQ connection closed');
 
             // Flush logs
             await flushLogger();
-            console.log('Graceful shutdown complete'); // ✅ Use console after logger is closed
+            console.log('Graceful shutdown complete');
 
             clearTimeout(forceShutdownTimer);
             process.exit(0);
         } catch (error) {
-            console.error('Error during shutdown', error.message); // ✅ Use console directly
+            console.error('Error during shutdown', error.message);
             clearTimeout(forceShutdownTimer);
             process.exit(1);
         }
@@ -161,7 +164,7 @@ const setupGracefulShutdown = (server, container) => {
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
 
-    // ✅ Handle uncaught exceptions - use console.error to avoid logger issues
+    // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {
         console.error('='.repeat(60));
         console.error('❌ UNCAUGHT EXCEPTION');
@@ -172,7 +175,7 @@ const setupGracefulShutdown = (server, container) => {
         shutdown('uncaughtException');
     });
 
-    // ✅ Handle unhandled rejections - use console.error
+    // Handle unhandled rejections
     process.on('unhandledRejection', (reason, promise) => {
         console.error('='.repeat(60));
         console.error('❌ UNHANDLED REJECTION');
@@ -189,7 +192,7 @@ const startServer = async () => {
     try {
         logger.info('Starting Global-Fi Ultra...');
 
-        // Safe environment check - NEVER log actual key values
+        // Safe environment check
         if (config.server.isDev) {
             logger.debug('Environment check', {
                 nodeEnv: config.server.nodeEnv,
@@ -201,11 +204,25 @@ const startServer = async () => {
             });
         }
 
-        // Connect to required services
+        // Connect to MongoDB (REQUIRED)
         await connectDatabase();
-        await connectRedis();
 
-        // Connect to optional services (don't crash if unavailable)
+        try {
+            const redisConnected = await connectRedis();
+            if (redisConnected) {
+                logger.info('✅ Redis connected - caching enabled');
+            } else {
+                logger.warn('⚠️ Redis not available - running without cache');
+                logger.info('ℹ️  Impact: Rate limiting and caching will use in-memory fallbacks');
+            }
+        } catch (error) {
+            logger.warn('⚠️ Redis connection failed - continuing without cache', {
+                error: error.message,
+                impact: 'Rate limiting and caching will use in-memory fallbacks'
+            });
+        }
+
+        // Connect to RabbitMQ (optional)
         try {
             await connectRabbitMQ();
         } catch (error) {
@@ -232,7 +249,7 @@ const startServer = async () => {
 
         // Initialize DI container
         const container = getContainer();
-        await container.initialize({ io });  // ✅ With await
+        await container.initialize({ io });
 
         // Setup routes
         setupRoutes(app, container);
@@ -261,5 +278,5 @@ const startServer = async () => {
     }
 };
 
-// Start the server
+// Start the server by calling it 
 startServer();

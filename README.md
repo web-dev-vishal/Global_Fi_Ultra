@@ -578,18 +578,26 @@ All code has been verified and is production-ready:
 
 ### Render.com (Recommended)
 
-The repository includes `render.yaml` for automated deployment.
+The repository includes `render.yaml` for automated blueprint deployment.
 
-```bash
-# 1. Push code to GitHub
-# 2. Create Render.com account
-# 3. New → Blueprint
-# 4. Connect your repository
-# 5. Add API keys as environment variables
-# 6. Click "Apply"
-```
+> 📖 **Full guide:** See [`docs/RENDER_DEPLOYMENT.md`](docs/RENDER_DEPLOYMENT.md) for step-by-step instructions including MongoDB Atlas setup, Redis configuration, custom domains, and troubleshooting.
 
-Render creates MongoDB, Redis, and deploys your app automatically.
+**Quick Deploy:**
+1. Push code to GitHub
+2. Create a [Render.com](https://render.com) account
+3. **New** → **Blueprint** → Connect your repository
+4. Set secret environment variables (`MONGODB_URI`, API keys, `CORS_ORIGIN`)
+5. Click **Apply** — Render builds and deploys automatically
+
+**Rate Limiting Tiers:**
+| Tier                | Limit          | Endpoints                       |
+|---------------------|----------------|---------------------------------|
+| Global API          | 100 req/15min  | All `/api/**` routes            |
+| Auth                | 5 req/15min    | Login/register (future)         |
+| Authenticated User  | 1000 req/15min | Users, alerts, watchlists, assets|
+| Admin               | 20 req/15min   | Cache clear, audit logs         |
+| AI                  | 10 req/1min    | LLM-powered endpoints           |
+| Health              | 1000 req/1min  | Liveness & readiness probes     |
 
 ### Heroku
 

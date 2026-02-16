@@ -1,7 +1,39 @@
 /**
  * Global-Fi Ultra - Dependency Injection Container
  * 
- * Constructor-based DI container for managing service instances.
+ * Constructor-based DI container that manages all service instances and
+ * their dependencies. This is the single location where all application
+ * components are wired together.
+ * 
+ * Architecture Overview:
+ * ──────────────────────────────────────────────────────────────────────
+ * The container follows a layered initialization pattern:
+ * 
+ * 1. Infrastructure Layer (bottom)
+ *    - Cache (RedisCache)
+ *    - Repositories (User, Alert, Watchlist, Asset, AuditLog)
+ *    - API Clients (AlphaVantage, CoinGecko, FRED, NewsAPI, Finnhub, ExchangeRate)
+ *    - WebSocket Manager (Socket.io)
+ * 
+ * 2. AI Infrastructure (optional)
+ *    - GroqClient → AINewsService, AIMarketService
+ *    - AIStreamHandler (WebSocket-based streaming)
+ *    - AIJobQueue (RabbitMQ consumer)
+ * 
+ * 3. Service Layer (middle)
+ *    - FinancialDataService, UserService, WatchlistService, AlertService, AssetService
+ * 
+ * 4. Controller Layer (top)
+ *    - HealthController, FinancialController, AdminController, StatusController
+ *    - UserController, WatchlistController, AlertController, AssetController
+ *    - AIController (optional)
+ * 
+ * Singleton Pattern:
+ * The module exports a `getContainer()` factory function that lazily creates
+ * a single Container instance. This ensures all parts of the application
+ * share the same service instances.
+ * 
+ * @module di/container
  */
 
 import { AlphaVantageClient, CoinGeckoClient, ExchangeRateClient, NewsAPIClient, FREDClient, FinnhubClient } from '../infrastructure/http/index.js';
@@ -35,7 +67,7 @@ import {
 import { logger } from '../config/logger.js';
 import { config } from '../config/environment.js';
 
-// AI Infrastructure
+// AI Infrastructure — conditionally initialized based on GROQ_API_KEY
 import { GroqClient } from '../infrastructure/ai/groqClient.js';
 import { AINewsService } from '../services/AINewsService.js';
 import { AIMarketService } from '../services/AIMarketService.js';
@@ -44,27 +76,50 @@ import { AIJobQueue } from '../infrastructure/messaging/AIJobQueue.js';
 import { AIController } from '../controllers/AIController.js';
 
 /**
- * DI Container
+ * DI Container — manages all service instances and their lifecycle.
+ * 
+ * Usage:
+ * ```js
+ * const container = getContainer();
+ * await container.initialize({ io });
+ * const userController = container.get('userController');
+ * ```
  */
 export class Container {
+    /**
+     * Creates a new Container with an empty instance registry.
+     */
     constructor() {
+        /** @type {Map<string, any>} Registry of all managed service instances */
         this.instances = new Map();
+        /** @type {SocketManager|null} WebSocket manager (set during initialization) */
         this.socketManager = null;
+        /** @type {AIStreamHandler|null} AI streaming handler (null if AI disabled) */
         this.aiStreamHandler = null;
     }
 
     /**
-     * Initialize all services
-     * @param {Object} options
-     * @param {import('socket.io').Server} options.io - Socket.io server
+     * Initialize all services, repositories, and controllers.
+     * 
+     * This is the heart of the DI container — it creates every instance
+     * in dependency order and wires them together via constructor injection.
+     * 
+     * AI services are only initialized if `GROQ_API_KEY` is configured.
+     * If AI initialization fails, the container gracefully degrades and
+     * the rest of the application continues functioning.
+     * 
+     * @param {Object} options - Initialization options
+     * @param {import('socket.io').Server} options.io - Socket.io server instance
+     * @returns {Promise<void>}
      */
-    async initialize(options) {  // ✅ ADDED 'async' keyword here
+    async initialize(options) {
         const { io } = options;
 
-        // Circuit breaker state change callback
+        // Callback for circuit breaker state changes — broadcasts to WebSocket clients
         const onCircuitStateChange = (change) => {
             if (this.socketManager) {
                 this.socketManager.broadcastCircuitBreakerStateChange(change);
+                // Alert connected clients when a circuit breaker trips
                 if (change.newState === 'OPEN') {
                     this.socketManager.broadcastSystemWarning({
                         service: change.service,
@@ -75,7 +130,7 @@ export class Container {
             }
         };
 
-        // Infrastructure
+        // ─── Layer 1: Infrastructure ─────────────────────────────────
         const cache = new RedisCache();
         const auditLogRepository = new AuditLogRepository();
         const userRepository = new UserRepository();
@@ -83,7 +138,7 @@ export class Container {
         const watchlistRepository = new WatchlistRepository();
         const alertRepository = new AlertRepository();
 
-        // API Clients
+        // External API clients — each with its own circuit breaker
         const alphaVantageClient = new AlphaVantageClient({ onCircuitStateChange });
         const coinGeckoClient = new CoinGeckoClient({ onCircuitStateChange });
         const exchangeRateClient = new ExchangeRateClient({ onCircuitStateChange });
@@ -91,6 +146,7 @@ export class Container {
         const fredClient = new FREDClient({ onCircuitStateChange });
         const finnhubClient = new FinnhubClient({ onCircuitStateChange });
 
+        // All API clients in an array for StatusController (circuit breaker status)
         const apiClients = [
             alphaVantageClient,
             coinGeckoClient,
@@ -100,10 +156,10 @@ export class Container {
             finnhubClient,
         ];
 
-        // Socket Manager
+        // WebSocket manager for real-time data broadcasting
         this.socketManager = new SocketManager(io);
 
-        // AI Infrastructure (only if API key is configured)
+        // ─── Layer 1.5: AI Infrastructure (Optional) ────────────────
         let groqClient = null;
         let aiNewsService = null;
         let aiMarketService = null;
@@ -114,44 +170,29 @@ export class Container {
             try {
                 logger.info('Initializing AI services...');
 
-                // Initialize Groq client
+                // Create and validate the Groq LLM client
                 groqClient = new GroqClient({
                     apiKey: config.ai.groqApiKey,
                     cacheService: cache,
                     logger
                 });
-
-                // Validate API key
-                await groqClient.validateApiKey();  // ✅ This line (125) now works because the function is async
+                await groqClient.validateApiKey();
                 logger.info('✅ Groq API key validated');
 
-                // Initialize AI services
-                aiNewsService = new AINewsService({
-                    groqClient,
-                    cacheService: cache
-                });
+                // AI domain services (depend on GroqClient + Cache)
+                aiNewsService = new AINewsService({ groqClient, cacheService: cache });
+                aiMarketService = new AIMarketService({ groqClient, cacheService: cache });
 
-                aiMarketService = new AIMarketService({
-                    groqClient,
-                    cacheService: cache
-                });
-
-                // Initialize AI stream handler
+                // AI WebSocket streaming handler
                 this.aiStreamHandler = new AIStreamHandler({
-                    io,
-                    groqClient,
-                    aiNewsService,
-                    aiMarketService
+                    io, groqClient, aiNewsService, aiMarketService
                 });
                 this.aiStreamHandler.initialize();
                 logger.info('✅ AI WebSocket handler initialized');
 
-                // Initialize job queue (optional - RabbitMQ might not be available)
+                // AI job queue (depends on RabbitMQ — may not be available)
                 try {
-                    aiJobQueue = new AIJobQueue({
-                        aiNewsService,
-                        aiMarketService
-                    });
+                    aiJobQueue = new AIJobQueue({ aiNewsService, aiMarketService });
                     await aiJobQueue.connect();
                     await aiJobQueue.startConsumers();
                     logger.info('✅ AI job queue initialized');
@@ -162,20 +203,13 @@ export class Container {
                     aiJobQueue = null;
                 }
 
-                // Initialize AI controller
-                aiController = new AIController({
-                    aiNewsService,
-                    aiMarketService,
-                    aiJobQueue
-                });
-
+                // AI controller (presentation layer for AI endpoints)
+                aiController = new AIController({ aiNewsService, aiMarketService, aiJobQueue });
                 logger.info('✅ AI services initialized successfully');
             } catch (error) {
-                logger.error('❌ Failed to initialize AI services', {
-                    error: error.message
-                });
+                // Graceful degradation: AI failure doesn't crash the app
+                logger.error('❌ Failed to initialize AI services', { error: error.message });
                 logger.warn('⚠️  AI features will be disabled');
-                // Set all to null if initialization fails
                 groqClient = null;
                 aiNewsService = null;
                 aiMarketService = null;
@@ -187,7 +221,7 @@ export class Container {
             logger.info('ℹ️  AI features disabled (GROQ_API_KEY not configured)');
         }
 
-        // Services
+        // ─── Layer 2: Services ───────────────────────────────────────
         const financialDataService = new FinancialDataService({
             alphaVantageClient,
             coinGeckoClient,
@@ -204,7 +238,7 @@ export class Container {
         const alertService = new AlertService({ alertRepository });
         const assetService = new AssetService({ financialAssetRepository });
 
-        // Controllers
+        // ─── Layer 3: Controllers ────────────────────────────────────
         const healthController = new HealthController();
         const financialController = new FinancialController({
             financialDataService,
@@ -225,7 +259,8 @@ export class Container {
             financialDataService,
         });
 
-        // Store instances
+        // ─── Register All Instances ──────────────────────────────────
+        // Infrastructure
         this.instances.set('cache', cache);
         this.instances.set('auditLogRepository', auditLogRepository);
         this.instances.set('userRepository', userRepository);
@@ -233,11 +268,15 @@ export class Container {
         this.instances.set('watchlistRepository', watchlistRepository);
         this.instances.set('alertRepository', alertRepository);
         this.instances.set('apiClients', apiClients);
+
+        // Services
         this.instances.set('financialDataService', financialDataService);
         this.instances.set('userService', userService);
         this.instances.set('watchlistService', watchlistService);
         this.instances.set('alertService', alertService);
         this.instances.set('assetService', assetService);
+
+        // Controllers
         this.instances.set('healthController', healthController);
         this.instances.set('financialController', financialController);
         this.instances.set('adminController', adminController);
@@ -247,7 +286,7 @@ export class Container {
         this.instances.set('alertController', alertController);
         this.instances.set('assetController', assetController);
 
-        // Store AI instances (may be null if not configured)
+        // AI instances (may be null if AI is not configured/available)
         this.instances.set('groqClient', groqClient);
         this.instances.set('aiNewsService', aiNewsService);
         this.instances.set('aiMarketService', aiMarketService);
@@ -258,40 +297,47 @@ export class Container {
     }
 
     /**
-     * Get a service instance
-     * @param {string} name
-     * @returns {any}
+     * Retrieve a registered service instance by name.
+     * 
+     * @param {string} name - The registered service name (e.g., 'userController')
+     * @returns {any} The service instance, or undefined if not registered
      */
     get(name) {
         return this.instances.get(name);
     }
 
     /**
-     * Get Socket Manager
-     * @returns {SocketManager}
+     * Get the Socket.io manager instance.
+     * 
+     * @returns {SocketManager|null} Socket manager, or null if not yet initialized
      */
     getSocketManager() {
         return this.socketManager;
     }
 
     /**
-     * Get AI Stream Handler
-     * @returns {AIStreamHandler|null}
+     * Get the AI streaming WebSocket handler.
+     * 
+     * @returns {AIStreamHandler|null} AI stream handler, or null if AI is disabled
      */
     getAIStreamHandler() {
         return this.aiStreamHandler;
     }
 
     /**
-     * Check if AI is enabled
-     * @returns {boolean}
+     * Check whether AI features are enabled and initialized.
+     * 
+     * @returns {boolean} True if AIController was successfully created
      */
     isAIEnabled() {
         return this.instances.get('aiController') !== null;
     }
 
     /**
-     * Close AI job queue
+     * Gracefully close the AI job queue (RabbitMQ consumer).
+     * Called during server shutdown to stop consuming messages.
+     * 
+     * @returns {Promise<void>}
      */
     async closeAIJobQueue() {
         const aiJobQueue = this.instances.get('aiJobQueue');
@@ -301,12 +347,17 @@ export class Container {
     }
 }
 
-// Singleton instance
+// ─── Singleton Factory ───────────────────────────────────────────────────────
+
+/** @type {Container|null} Singleton container instance */
 let container = null;
 
 /**
- * Get or create container instance
- * @returns {Container}
+ * Get or create the singleton Container instance.
+ * 
+ * Call `.initialize({ io })` on the returned container before using `.get()`.
+ * 
+ * @returns {Container} The singleton container instance
  */
 export const getContainer = () => {
     if (!container) {

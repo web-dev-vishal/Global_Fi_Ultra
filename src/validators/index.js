@@ -1,6 +1,4 @@
-/**
- * Global-Fi Ultra - DTOs Index
- */
+// Validators index
 
 export {
     globalFiSchema,

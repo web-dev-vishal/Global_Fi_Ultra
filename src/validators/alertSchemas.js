@@ -1,14 +1,7 @@
-/**
- * Global-Fi Ultra - Alert Validation Schemas
- * 
- * Zod schemas for alert-related requests.
- */
+// Alert validation schemas
 
 import { z } from 'zod';
 
-/**
- * Create alert schema
- */
 export const createAlertSchema = z.object({
     body: z.object({
         userId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format'),
@@ -34,9 +27,6 @@ export const createAlertSchema = z.object({
     }),
 });
 
-/**
- * Update alert schema
- */
 export const updateAlertSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid alert ID format'),
@@ -59,23 +49,14 @@ export const updateAlertSchema = z.object({
     }),
 });
 
-/**
- * Get alert schema
- */
 export const getAlertSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid alert ID format'),
     }),
 });
 
-/**
- * Delete alert schema
- */
 export const deleteAlertSchema = getAlertSchema;
 
-/**
- * List alerts schema
- */
 export const listAlertsSchema = z.object({
     query: z.object({
         userId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format').optional(),
@@ -88,9 +69,6 @@ export const listAlertsSchema = z.object({
     }),
 });
 
-/**
- * Activate/Deactivate alert schema
- */
 export const toggleAlertSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid alert ID format'),

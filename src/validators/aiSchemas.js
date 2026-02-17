@@ -1,16 +1,8 @@
-/**
- * AI Endpoint Validation Schemas
- * 
- * Zod schemas for validating request bodies on all AI endpoints.
- * 
- * @module application/dto/aiSchemas
- */
+// AI endpoint validation schemas
 
 import { z } from 'zod';
 
-/**
- * Sentiment analysis request schema
- */
+// Sentiment analysis
 export const sentimentSchema = z.object({
     text: z.string()
         .min(1, 'Text is required')
@@ -18,9 +10,7 @@ export const sentimentSchema = z.object({
     type: z.enum(['news', 'general']).optional().default('general'),
 });
 
-/**
- * Asset analysis request schema
- */
+// Asset analysis
 export const analyzeSchema = z.object({
     symbol: z.string()
         .min(1, 'Symbol is required')
@@ -36,9 +26,7 @@ export const analyzeSchema = z.object({
     timeframe: z.enum(['1h', '4h', '1d', '1w', '1m']).optional().default('1d'),
 });
 
-/**
- * Asset comparison request schema
- */
+// Asset comparison
 export const compareSchema = z.object({
     assets: z.array(z.object({
         symbol: z.string().min(1).max(10),
@@ -47,9 +35,7 @@ export const compareSchema = z.object({
     })).min(2, 'At least 2 assets are required for comparison'),
 });
 
-/**
- * Recommendation request schema
- */
+// Recommendation
 export const recommendSchema = z.object({
     userProfile: z.object({
         riskTolerance: z.enum(['conservative', 'moderate', 'aggressive']),
@@ -64,9 +50,7 @@ export const recommendSchema = z.object({
     })).min(1, 'At least one market data point required'),
 });
 
-/**
- * Portfolio analysis request schema
- */
+// Portfolio analysis
 export const portfolioSchema = z.object({
     holdings: z.array(z.object({
         symbol: z.string().min(1),
@@ -80,9 +64,7 @@ export const portfolioSchema = z.object({
     }).optional(),
 });
 
-/**
- * Price prediction request schema
- */
+// Price prediction
 export const predictSchema = z.object({
     symbol: z.string().min(1).max(10),
     historicalData: z.array(z.object({
@@ -93,9 +75,7 @@ export const predictSchema = z.object({
     daysAhead: z.number().int().min(1).max(90).optional().default(7),
 });
 
-/**
- * Market movement explanation request schema
- */
+// Market movement explanation
 export const explainSchema = z.object({
     symbol: z.string().min(1).max(10),
     changePercent: z.number(),
@@ -105,9 +85,7 @@ export const explainSchema = z.object({
     })).optional().default([]),
 });
 
-/**
- * News impact analysis request schema
- */
+// News impact analysis
 export const newsImpactSchema = z.object({
     newsArticles: z.array(z.object({
         title: z.string().min(1),
@@ -117,9 +95,7 @@ export const newsImpactSchema = z.object({
     })).min(1, 'At least one news article required'),
 });
 
-/**
- * News summary request schema
- */
+// News summary
 export const newsSummarySchema = z.object({
     newsArticles: z.array(z.object({
         title: z.string().min(1),
@@ -129,18 +105,14 @@ export const newsSummarySchema = z.object({
     maxLength: z.number().int().min(50).max(1000).optional().default(100),
 });
 
-/**
- * Job submission request schema
- */
+// Job submission
 export const jobSchema = z.object({
     jobType: z.string().min(1, 'Job type is required'),
     data: z.record(z.unknown()),
     priority: z.number().int().min(0).max(10).optional().default(0),
 });
 
-/**
- * Chat request schema
- */
+// Chat request
 export const chatSchema = z.object({
     message: z.string().min(1).max(5000),
     sessionId: z.string().optional(),
@@ -150,12 +122,7 @@ export const chatSchema = z.object({
     }).optional(),
 });
 
-/**
- * Middleware factory: validates request body against a Zod schema
- * 
- * @param {z.ZodSchema} schema - Zod schema to validate against
- * @returns {Function} Express middleware
- */
+// Middleware factory for validating request body
 export const validateRequest = (schema) => {
     return (req, res, next) => {
         const result = schema.safeParse(req.body);
@@ -175,7 +142,6 @@ export const validateRequest = (schema) => {
             });
         }
 
-        // Replace body with validated & coerced data
         req.body = result.data;
         next();
     };

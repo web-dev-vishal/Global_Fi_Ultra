@@ -1,14 +1,8 @@
-/**
- * Global-Fi Ultra - Global-Fi Output Schema
- * 
- * Zod schema for the normalized output format broadcast via Socket.io.
- */
+// Global-Fi output schema for normalized Socket.io broadcasts
 
 import { z } from 'zod';
 
-/**
- * Stock data schema
- */
+// Stock data
 export const stockDataSchema = z.object({
     symbol: z.string(),
     price: z.string(),
@@ -23,9 +17,7 @@ export const stockDataSchema = z.object({
     source: z.literal('alpha_vantage'),
 });
 
-/**
- * Crypto data schema
- */
+// Crypto data
 export const cryptoDataSchema = z.object({
     symbol: z.string(),
     priceUSD: z.string(),
@@ -41,9 +33,7 @@ export const cryptoDataSchema = z.object({
     source: z.literal('coingecko'),
 });
 
-/**
- * Forex data schema
- */
+// Forex data
 export const forexDataSchema = z.object({
     baseCurrency: z.string(),
     rates: z.record(z.string()),
@@ -53,9 +43,7 @@ export const forexDataSchema = z.object({
     source: z.literal('exchangerate_api'),
 });
 
-/**
- * News article schema
- */
+// News article
 export const newsArticleSchema = z.object({
     title: z.string(),
     description: z.string(),
@@ -66,9 +54,7 @@ export const newsArticleSchema = z.object({
     sourceName: z.string(),
 });
 
-/**
- * Economic data schema
- */
+// Economic data
 export const economicDataSchema = z.object({
     indicator: z.string(),
     value: z.string().nullable(),
@@ -78,9 +64,7 @@ export const economicDataSchema = z.object({
     source: z.literal('fred'),
 });
 
-/**
- * Market news schema
- */
+// Market news
 export const marketNewsSchema = z.object({
     id: z.string().nullable(),
     headline: z.string(),
@@ -93,27 +77,21 @@ export const marketNewsSchema = z.object({
     sourceName: z.string(),
 });
 
-/**
- * Error entry schema
- */
+// Error entry
 export const errorEntrySchema = z.object({
     service: z.string(),
     code: z.string(),
     message: z.string(),
 });
 
-/**
- * Metadata schema
- */
+// Metadata
 export const metadataSchema = z.object({
     totalDuration: z.number(),
     cacheHits: z.number(),
     apiCallsMade: z.number(),
 });
 
-/**
- * Complete Global-Fi schema
- */
+// Complete Global-Fi schema
 export const globalFiSchema = z.object({
     requestId: z.string().uuid(),
     timestamp: z.string().datetime(),
@@ -129,9 +107,5 @@ export const globalFiSchema = z.object({
     errors: z.array(errorEntrySchema),
     metadata: metadataSchema,
 });
-
-/**
- * @typedef {z.infer<typeof globalFiSchema>} GlobalFiData
- */
 
 export default globalFiSchema;

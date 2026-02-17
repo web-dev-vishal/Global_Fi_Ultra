@@ -1,8 +1,4 @@
-/**
- * Global-Fi Ultra - Redis Configuration
- * 
- * Redis client setup with reconnection logic and graceful handling.
- */
+// Redis client setup with reconnection logic
 
 import Redis from 'ioredis';
 import { config } from './environment.js';
@@ -11,10 +7,6 @@ import { logger } from './logger.js';
 let redisClient = null;
 let isRedisAvailable = false;
 
-/**
- * Create and configure Redis client
- * @returns {Redis|null}
- */
 export const createRedisClient = () => {
     if (redisClient) {
         return redisClient;
@@ -33,14 +25,13 @@ export const createRedisClient = () => {
         retryStrategy(times) {
             if (times > 3) {
                 logger.warn('⚠️ Redis max retries reached - disabling Redis');
-                return null; // Stop retrying
+                return null;
             }
             const delay = Math.min(times * 50, 2000);
             return delay;
         },
     };
 
-    // Add password if provided
     if (config.redis.password) {
         options.password = config.redis.password;
     }
@@ -73,12 +64,7 @@ export const createRedisClient = () => {
     return redisClient;
 };
 
-/**
- * Connect to Redis
- * @returns {Promise<Redis|null>}
- */
 export const connectRedis = async () => {
-    
     if (!config.redis.url) {
         logger.warn('⚠️ REDIS_URL not set - running without cache');
         return null;
@@ -101,7 +87,6 @@ export const connectRedis = async () => {
             error: error.message || String(error) 
         });
         
-        // Clean up failed client
         if (client) {
             try {
                 client.disconnect();
@@ -114,18 +99,10 @@ export const connectRedis = async () => {
     }
 };
 
-/**
- * Get Redis client instance
- * @returns {Redis|null}
- */
 export const getRedisClient = () => {
     return redisClient;
 };
 
-/**
- * Close Redis connection gracefully
- * @returns {Promise<void>}
- */
 export const closeRedisConnection = async () => {
     if (redisClient) {
         try {
@@ -141,10 +118,6 @@ export const closeRedisConnection = async () => {
     }
 };
 
-/**
- * Check if Redis is connected
- * @returns {boolean}
- */
 export const isRedisConnected = () => {
     return redisClient?.status === 'ready' && isRedisAvailable;
 };

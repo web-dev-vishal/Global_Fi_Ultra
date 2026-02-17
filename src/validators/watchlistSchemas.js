@@ -1,14 +1,7 @@
-/**
- * Global-Fi Ultra - Watchlist Validation Schemas
- * 
- * Zod schemas for watchlist-related requests.
- */
+// Watchlist validation schemas
 
 import { z } from 'zod';
 
-/**
- * Create watchlist schema
- */
 export const createWatchlistSchema = z.object({
     body: z.object({
         userId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format'),
@@ -30,9 +23,6 @@ export const createWatchlistSchema = z.object({
     }),
 });
 
-/**
- * Update watchlist schema
- */
 export const updateWatchlistSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid watchlist ID format'),
@@ -53,23 +43,14 @@ export const updateWatchlistSchema = z.object({
     }),
 });
 
-/**
- * Get watchlist schema
- */
 export const getWatchlistSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid watchlist ID format'),
     }),
 });
 
-/**
- * Delete watchlist schema
- */
 export const deleteWatchlistSchema = getWatchlistSchema;
 
-/**
- * List watchlists schema
- */
 export const listWatchlistsSchema = z.object({
     query: z.object({
         userId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format').optional(),
@@ -80,9 +61,6 @@ export const listWatchlistsSchema = z.object({
     }),
 });
 
-/**
- * Add asset to watchlist schema
- */
 export const addAssetSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid watchlist ID format'),
@@ -98,9 +76,6 @@ export const addAssetSchema = z.object({
     }),
 });
 
-/**
- * Remove asset from watchlist schema
- */
 export const removeAssetSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid watchlist ID format'),

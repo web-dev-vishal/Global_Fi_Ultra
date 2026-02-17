@@ -1,8 +1,4 @@
-/**
- * Global-Fi Ultra - Money Value Object
- * 
- * Immutable value object for precise monetary calculations.
- */
+// Value objects for precise monetary calculations
 
 export class Money {
     constructor(value) {
@@ -73,9 +69,6 @@ export class Money {
     }
 }
 
-/**
- * Percentage Value Object
- */
 export class Percentage {
     constructor(value) {
         const parsed = parseFloat(value);

@@ -1,14 +1,7 @@
-/**
- * Global-Fi Ultra - Asset Validation Schemas
- * 
- * Zod schemas for financial asset-related requests.
- */
+// Financial asset validation schemas
 
 import { z } from 'zod';
 
-/**
- * Create asset schema
- */
 export const createAssetSchema = z.object({
     body: z.object({
         symbol: z.string()
@@ -41,9 +34,6 @@ export const createAssetSchema = z.object({
     }),
 });
 
-/**
- * Update asset schema
- */
 export const updateAssetSchema = z.object({
     params: z.object({
         symbol: z.string().toUpperCase().trim(),
@@ -75,23 +65,14 @@ export const updateAssetSchema = z.object({
     }),
 });
 
-/**
- * Get asset schema
- */
 export const getAssetSchema = z.object({
     params: z.object({
         symbol: z.string().toUpperCase().trim(),
     }),
 });
 
-/**
- * Delete asset schema
- */
 export const deleteAssetSchema = getAssetSchema;
 
-/**
- * Search/List assets schema
- */
 export const searchAssetsSchema = z.object({
     query: z.object({
         type: z.enum(['stock', 'crypto', 'forex', 'commodity', 'index']).optional(),
@@ -103,9 +84,6 @@ export const searchAssetsSchema = z.object({
     }),
 });
 
-/**
- * Get live asset data schema
- */
 export const getLiveAssetSchema = z.object({
     params: z.object({
         symbol: z.string().toUpperCase().trim(),

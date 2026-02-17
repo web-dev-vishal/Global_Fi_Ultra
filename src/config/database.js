@@ -1,16 +1,9 @@
-/**
- * Global-Fi Ultra - MongoDB Database Configuration
- * 
- * Mongoose connection setup with connection pooling and graceful handling.
- */
+// MongoDB database configuration with connection pooling
 
 import mongoose from 'mongoose';
 import { config } from './environment.js';
 import { logger } from './logger.js';
 
-/**
- * MongoDB connection options
- */
 const mongoOptions = {
     maxPoolSize: config.database.poolSize,
     minPoolSize: 2,
@@ -19,10 +12,6 @@ const mongoOptions = {
     family: 4, // Use IPv4
 };
 
-/**
- * Connect to MongoDB
- * @returns {Promise<typeof mongoose>}
- */
 export const connectDatabase = async () => {
     try {
         mongoose.connection.on('connected', () => {
@@ -46,10 +35,6 @@ export const connectDatabase = async () => {
     }
 };
 
-/**
- * Close MongoDB connection gracefully
- * @returns {Promise<void>}
- */
 export const closeDatabaseConnection = async () => {
     try {
         await mongoose.connection.close();
@@ -60,10 +45,6 @@ export const closeDatabaseConnection = async () => {
     }
 };
 
-/**
- * Check if database is connected
- * @returns {boolean}
- */
 export const isDatabaseConnected = () => {
     return mongoose.connection.readyState === 1;
 };

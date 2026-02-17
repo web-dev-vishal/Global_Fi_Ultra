@@ -1,8 +1,5 @@
-/**
- * Global-Fi Ultra - Winston Logger Configuration
- * 
- * Structured JSON logging for production, pretty printing for development.
- */
+// Winston logger configuration
+// Structured JSON for production, pretty printing for development
 
 import winston from 'winston';
 import { config } from './environment.js';
@@ -15,18 +12,14 @@ if (!existsSync(logDir)) {
     mkdirSync(logDir, { recursive: true });
 }
 
-/**
- * Custom format for adding metadata
- */
+// Custom format for adding metadata
 const addMetadata = winston.format((info) => {
     info.timestamp = new Date().toISOString();
     info.service = 'globalfi-ultra';
     return info;
 });
 
-/**
- * Development format - colorized and readable
- */
+// Development format - colorized and readable
 const devFormat = winston.format.combine(
     addMetadata(),
     winston.format.colorize(),
@@ -39,20 +32,15 @@ const devFormat = winston.format.combine(
     })
 );
 
-/**
- * Production format - structured JSON
- */
+// Production format - structured JSON
 const prodFormat = winston.format.combine(
     addMetadata(),
     winston.format.errors({ stack: true }),
     winston.format.json()
 );
 
-/**
- * Transports configuration
- */
+// Transports configuration
 const transports = [
-    // Console transport
     new winston.transports.Console({
         format: config.server.isProd ? prodFormat : devFormat,
     }),
@@ -77,46 +65,27 @@ if (config.server.isProd) {
     );
 }
 
-/**
- * Winston logger instance
- */
 export const logger = winston.createLogger({
     level: config.logging.level,
     transports,
     exitOnError: false,
 });
 
-// ✅ Track if logger has been closed
 let isLoggerClosed = false;
 
-/**
- * Create a child logger with request context
- * @param {string} requestId - Request ID for tracing
- * @returns {winston.Logger}
- */
 export const createRequestLogger = (requestId) => {
     return logger.child({ requestId });
 };
 
-/**
- * Safe logging wrapper - prevents writing after logger is closed
- * @param {string} level - Log level (info, error, warn, debug)
- * @param {string} message - Log message
- * @param {Object} meta - Additional metadata
- */
+// Safe logging wrapper - prevents writing after logger is closed
 export const safeLog = (level, message, meta = {}) => {
     if (!isLoggerClosed) {
         logger[level](message, meta);
     } else {
-        // Fallback to console if logger is closed
         console[level === 'error' ? 'error' : 'log'](`[${level.toUpperCase()}]`, message, meta);
     }
 };
 
-/**
- * Flush logger and close transports
- * @returns {Promise<void>}
- */
 export const flushLogger = () => {
     return new Promise((resolve) => {
         if (isLoggerClosed) {
@@ -124,13 +93,12 @@ export const flushLogger = () => {
             return;
         }
         
-        isLoggerClosed = true; // ✅ Mark logger as closed
+        isLoggerClosed = true;
         
         logger.on('finish', () => {
             resolve();
         });
         
-        // Set a timeout in case 'finish' event doesn't fire
         setTimeout(() => {
             resolve();
         }, 5000);
@@ -139,10 +107,6 @@ export const flushLogger = () => {
     });
 };
 
-/**
- * Check if logger is closed
- * @returns {boolean}
- */
 export const isLoggerActive = () => !isLoggerClosed;
 
 export default logger;

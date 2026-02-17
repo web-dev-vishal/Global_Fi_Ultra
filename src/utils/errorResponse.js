@@ -1,18 +1,5 @@
-/**
- * Standardized Error Response Utility
- * 
- * Provides a consistent error response format across all endpoints.
- * Works alongside the existing AppError class from core/errors.
- * 
- * @module utils/errorResponse
- */
+// Standardized error response utility
 
-/**
- * Send a standardized error response
- * 
- * @param {import('express').Response} res - Express response object
- * @param {Error} error - Error to respond with
- */
 export const errorResponse = (res, error) => {
     const statusCode = error.httpStatus || error.statusCode || 500;
     const response = {

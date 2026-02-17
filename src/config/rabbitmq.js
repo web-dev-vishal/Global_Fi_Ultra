@@ -1,8 +1,4 @@
-/**
- * Global-Fi Ultra - RabbitMQ Configuration
- * 
- * RabbitMQ connection management with retry logic.
- */
+// RabbitMQ connection management with retry logic
 
 import amqp from 'amqplib';
 import { config } from './environment.js';
@@ -11,12 +7,8 @@ import { logger } from './logger.js';
 let connection = null;
 let channel = null;
 
-/**
- * Connect to RabbitMQ with retry logic
- */
 export const connectRabbitMQ = async (retries = 5, delay = 3000) => {
     // Skip connection if no real RabbitMQ URL is configured
-    // (avoids 15s of pointless retry delays on Render/production)
     const url = config.rabbitmq.url;
     if (!url || url === 'amqp://localhost:5672' || url === 'amqp://localhost') {
         if (process.env.NODE_ENV === 'production') {
@@ -32,7 +24,6 @@ export const connectRabbitMQ = async (retries = 5, delay = 3000) => {
             connection = await amqp.connect(config.rabbitmq.url);
             channel = await connection.createChannel();
 
-            // Handle connection errors
             connection.on('error', (err) => {
                 logger.error('RabbitMQ connection error', { error: err.message });
             });
@@ -65,24 +56,12 @@ export const connectRabbitMQ = async (retries = 5, delay = 3000) => {
     }
 };
 
-/**
- * Get RabbitMQ channel
- */
 export const getRabbitMQChannel = () => channel;
 
-/**
- * Get RabbitMQ connection
- */
 export const getRabbitMQConnection = () => connection;
 
-/**
- * Check if RabbitMQ is connected
- */
 export const isRabbitMQConnected = () => connection !== null && channel !== null;
 
-/**
- * Close RabbitMQ connection
- */
 export const closeRabbitMQConnection = async () => {
     try {
         if (channel) {

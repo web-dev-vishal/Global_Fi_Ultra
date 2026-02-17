@@ -1,14 +1,7 @@
-/**
- * Global-Fi Ultra - User Validation Schemas
- * 
- * Zod schemas for user-related requests.
- */
+// User validation schemas
 
 import { z } from 'zod';
 
-/**
- * Create user schema
- */
 export const createUserSchema = z.object({
     body: z.object({
         email: z.string()
@@ -37,9 +30,6 @@ export const createUserSchema = z.object({
     }),
 });
 
-/**
- * Update user schema (full update)
- */
 export const updateUserSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format'),
@@ -73,28 +63,16 @@ export const updateUserSchema = z.object({
     }),
 });
 
-/**
- * Partial update user schema (PATCH)
- */
 export const patchUserSchema = updateUserSchema;
 
-/**
- * Get user by ID schema
- */
 export const getUserSchema = z.object({
     params: z.object({
         id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid user ID format'),
     }),
 });
 
-/**
- * Delete user schema
- */
 export const deleteUserSchema = getUserSchema;
 
-/**
- * List users schema
- */
 export const listUsersSchema = z.object({
     query: z.object({
         page: z.string().regex(/^\d+$/).transform(Number).optional(),

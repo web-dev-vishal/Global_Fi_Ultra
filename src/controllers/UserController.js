@@ -132,28 +132,81 @@ export class UserController {
     }
 
     // Login user with email and password
+    //     async loginUser(req, res, next) {
+    //         try {
+    //             const { email, password } = req.body;
+
+    //             const user = await this.userService.loginUser(email, password);
+
+    //             res.json({
+    //                 requestId: req.requestId,
+    //                 timestamp: new Date().toISOString(),
+    //                 message: 'Login successful',
+    //                 user,
+    //             });
+    //         } catch (error) {
+    //             if (error.message === 'Invalid credentials') {
+    //                 return res.status(401).json({
+    //                     error: 'Invalid email or password',
+    //                     requestId: req.requestId,
+    //                 });
+    //             }
+    //             if (error.message === 'Account is inactive') {
+    //                 return res.status(403).json({
+    //                     error: 'Account is inactive',
+    //                     requestId: req.requestId,
+    //                 });
+    //             }
+    //             next(error);
+    //         }
+    //     }
+
+    // Login user with email and password
     async loginUser(req, res, next) {
         try {
             const { email, password } = req.body;
 
-            const user = await this.userService.loginUser(email, password);
+            // Validate input
+            if (!email || !password) {
+                return res.status(400).json({
+                    error: {
+                        code: 'E1008',
+                        message: 'Email and password are required'
+                    },
+                    requestId: req.requestId,
+                });
+            }
+
+            const result = await this.userService.loginUser(email, password);
 
             res.json({
                 requestId: req.requestId,
                 timestamp: new Date().toISOString(),
                 message: 'Login successful',
-                user,
+                token: result.token,  // JWT token
+                user: {
+                    id: result.user._id,
+                    email: result.user.email,
+                    name: result.user.name,
+                    // Don't include password or sensitive data
+                }
             });
         } catch (error) {
             if (error.message === 'Invalid credentials') {
                 return res.status(401).json({
-                    error: 'Invalid email or password',
+                    error: {
+                        code: 'E1004',
+                        message: 'Invalid email or password'
+                    },
                     requestId: req.requestId,
                 });
             }
             if (error.message === 'Account is inactive') {
                 return res.status(403).json({
-                    error: 'Account is inactive',
+                    error: {
+                        code: 'E1005',
+                        message: 'Account is inactive'
+                    },
                     requestId: req.requestId,
                 });
             }

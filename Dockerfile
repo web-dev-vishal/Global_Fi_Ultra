@@ -1,7 +1,3 @@
-# ===========================================
-# Global-Fi Ultra - Multi-Stage Dockerfile
-# ===========================================
-
 # Stage 1: Build
 FROM node:20-alpine AS builder
 

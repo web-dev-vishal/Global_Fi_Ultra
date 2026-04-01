@@ -32,6 +32,7 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy source from builder
 COPY --from=builder /app/src ./src
+COPY --from=builder /app/server.js ./server.js
 
 # Create logs directory
 RUN mkdir -p logs && chown -R nodejs:nodejs logs
@@ -40,11 +41,11 @@ RUN mkdir -p logs && chown -R nodejs:nodejs logs
 USER nodejs
 
 # Expose port
-EXPOSE 4000
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:4000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+    CMD node -e "const port = process.env.PORT || 3000; require('http').get('http://localhost:' + port + '/api/v1/health/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Start application
-CMD ["node", "src/server.js"]
+CMD ["node", "server.js"]

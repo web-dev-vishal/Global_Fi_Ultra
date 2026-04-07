@@ -83,6 +83,21 @@ export const createApp = () => {
     // Global rate limit: 100 requests per 15 minutes, applied to all /api/** routes
     app.use('/api', globalRateLimiter);
 
+    // ─── Root Route ──────────────────────────────────────────────────
+    app.get('/', (req, res) => {
+        res.json({
+            name: 'Global-Fi Ultra API',
+            version: '1.0.0',
+            status: 'running',
+            docs: {
+                health:    '/api/v1/health/health',
+                readiness: '/api/v1/health/readiness',
+                financial: '/api/v1/financial',
+                ai:        '/api/v1/ai',
+            },
+        });
+    });
+
     return app;
 };
 

@@ -7,10 +7,9 @@ services:
     container_name: globalfi-ultra
     ports:
       - "4000:4000"
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=production
-      - PORT=4000
-      - HOST=0.0.0.0
       - MONGODB_URI=mongodb://mongo:27017/globalfi
       - REDIS_URL=redis://redis:6379
     depends_on:

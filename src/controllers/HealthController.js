@@ -36,8 +36,8 @@ export class HealthController {
             }
         };
 
-        // We need at least DB and Redis to be ready
-        const isReady = checks.database && checks.redis;
+        // Only DB is required — Redis is optional (falls back to in-memory)
+        const isReady = checks.database;
         const statusCode = isReady ? 200 : 503;
 
         res.status(statusCode).json({

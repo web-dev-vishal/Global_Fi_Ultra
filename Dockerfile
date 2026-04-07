@@ -40,12 +40,12 @@ RUN mkdir -p logs && chown -R nodejs:nodejs logs
 # Switch to non-root user
 USER nodejs
 
-# Expose port
-EXPOSE 3000
+# Expose port (Render overrides this via $PORT env var at runtime)
+EXPOSE 4000
 
-# Health check
+# Health check — uses $PORT so it works on Render and locally
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD node -e "const port = process.env.PORT || 3000; require('http').get('http://localhost:' + port + '/api/v1/health/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+    CMD node -e "const port = process.env.PORT || 4000; require('http').get('http://0.0.0.0:' + port + '/api/v1/health/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Start application
 CMD ["node", "server.js"]

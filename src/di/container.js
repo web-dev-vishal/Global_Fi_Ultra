@@ -166,7 +166,7 @@ export class Container {
         let aiJobQueue = null;
         let aiController = null;
 
-        if (config.ai.groqApiKey && config.ai.groqApiKey !== '') {
+        if (config.ai.groqApiKey && config.ai.groqApiKey !== '' && !config.ai.groqApiKey.startsWith("'")) {
             try {
                 logger.info('Initializing AI services...');
 

@@ -9,7 +9,7 @@ import { z } from 'zod';
 const envSchema = z.object({
   // Server config
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.string().transform(Number).default('3000'),
+  PORT: z.string().transform(Number).default('4000'),
   HOST: z.string().default('0.0.0.0'),
 
   // MongoDB

@@ -17,10 +17,9 @@ import { useNavigate } from 'react-router-dom'
 interface HeaderProps {
   connected: boolean
   warningCount?: number
-  compact?: boolean
 }
 
-export function Header({ connected, warningCount = 0, compact = false }: HeaderProps) {
+export function Header({ connected, warningCount = 0 }: HeaderProps) {
   const { isDark, toggleTheme, currentUser, logout } = useApp()
   const navigate = useNavigate()
 

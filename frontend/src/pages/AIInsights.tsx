@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
-import { useWebSocket } from '@/hooks/useWebSocket'
+import { useSharedWebSocket } from '@/components/layout/AppLayout'
 import { Textarea } from '@/components/ui/textarea'
 import { aiApi } from '@/lib/api'
 import type { SentimentResult, AssetAnalysis } from '@/types'
@@ -22,7 +22,7 @@ export function AIInsights() {
   const {
     connected, aiMessages, isAIStreaming,
     sendAIChat, stopAIStream, clearAIMessages
-  } = useWebSocket({ autoConnect: true })
+  } = useSharedWebSocket()
 
   const [chatInput, setChatInput] = useState('')
   const [sentimentText, setSentimentText] = useState('')

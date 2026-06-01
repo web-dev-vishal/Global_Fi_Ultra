@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PageHeader } from '@/components/common/PageHeader'
 import { ErrorState } from '@/components/common/ErrorState'
-import { useWebSocket } from '@/hooks/useWebSocket'
+import { useSharedWebSocket } from '@/components/layout/AppLayout'
 import { healthApi, statusApi } from '@/lib/api'
 import type { HealthStatus, ReadinessStatus, CircuitBreakerStatus } from '@/types'
 import { formatRelativeTime } from '@/lib/utils'
@@ -18,7 +18,7 @@ import { useApp } from '@/context/AppContext'
 
 export function System() {
   const { toast } = useApp()
-  const { connected, socketId, systemWarnings, circuitBreakerChanges, clearWarnings } = useWebSocket({ autoConnect: true })
+  const { connected, socketId, systemWarnings, circuitBreakerChanges, clearWarnings } = useSharedWebSocket()
   const [health, setHealth] = useState<HealthStatus | null>(null)
   const [readiness, setReadiness] = useState<ReadinessStatus | null>(null)
   const [circuitBreakers, setCircuitBreakers] = useState<CircuitBreakerStatus[]>([])

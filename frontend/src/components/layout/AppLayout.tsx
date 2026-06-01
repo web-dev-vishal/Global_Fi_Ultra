@@ -8,20 +8,10 @@ import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { useApp } from '@/context/AppContext'
-import type { FinancialDataResponse } from '@/types'
+import type { FinancialDataResponse, AIMessage } from '@/types'
 
-// ─── WebSocket Context ────────────────────────────────────────────────────────
-// Single WebSocket connection shared across all pages via context
-
-interface WebSocketContextValue {
-  connected: boolean
-  socketId: string | undefined
-  financialData: FinancialDataResponse | null
-  systemWarnings: SystemWarning[]
-  circuitBreakerChanges: CircuitBreakerChange[]
-  joinLiveStream: () => void
-  leaveLiveStream: () => void
-}
+// ─── Shared WebSocket Context ─────────────────────────────────────────────────
+// One Socket.io connection for the entire app — all pages read from this context
 
 interface SystemWarning {
   id: string
@@ -36,6 +26,27 @@ interface CircuitBreakerChange {
   service: string
   state: string
   timestamp: string
+}
+
+export interface WebSocketContextValue {
+  // Connection state
+  connected: boolean
+  socketId: string | undefined
+  // Financial data
+  financialData: FinancialDataResponse | null
+  // System events
+  systemWarnings: SystemWarning[]
+  circuitBreakerChanges: CircuitBreakerChange[]
+  clearWarnings: () => void
+  // Live stream
+  joinLiveStream: () => void
+  leaveLiveStream: () => void
+  // AI chat
+  aiMessages: AIMessage[]
+  isAIStreaming: boolean
+  sendAIChat: (message: string, sessionId?: string) => void
+  stopAIStream: () => void
+  clearAIMessages: () => void
 }
 
 const WebSocketContext = createContext<WebSocketContextValue | null>(null)
@@ -53,21 +64,11 @@ export function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { toasts, removeToast } = useApp()
 
-  // Single shared WebSocket connection for the entire app
+  // Single shared WebSocket connection — all pages consume via useSharedWebSocket()
   const ws = useWebSocket({ autoConnect: true })
 
   return (
-    <WebSocketContext.Provider
-      value={{
-        connected: ws.connected,
-        socketId: ws.socketId,
-        financialData: ws.financialData,
-        systemWarnings: ws.systemWarnings,
-        circuitBreakerChanges: ws.circuitBreakerChanges,
-        joinLiveStream: ws.joinLiveStream,
-        leaveLiveStream: ws.leaveLiveStream,
-      }}
-    >
+    <WebSocketContext.Provider value={ws}>
       <div className="flex h-screen overflow-hidden bg-background">
         {/* Desktop sidebar */}
         <div className="hidden md:flex">
@@ -100,22 +101,11 @@ export function AppLayout() {
             <span className="font-bold text-sm tracking-tight">Global-Fi Ultra</span>
           </div>
 
-          {/* Desktop header */}
-          <div className="hidden md:flex">
-            <Header
-              connected={ws.connected}
-              warningCount={ws.systemWarnings.length}
-            />
-          </div>
-
-          {/* Mobile header (compact) */}
-          <div className="flex md:hidden">
-            <Header
-              connected={ws.connected}
-              warningCount={ws.systemWarnings.length}
-              compact
-            />
-          </div>
+          {/* Header */}
+          <Header
+            connected={ws.connected}
+            warningCount={ws.systemWarnings.length}
+          />
 
           <main
             className="flex-1 overflow-y-auto"

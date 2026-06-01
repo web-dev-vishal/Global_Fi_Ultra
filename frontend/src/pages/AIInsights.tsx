@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader } from '@/components/common/PageHeader'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { Textarea } from '@/components/ui/textarea'
 import { aiApi } from '@/lib/api'
 import type { SentimentResult, AssetAnalysis } from '@/types'
 import { getSentimentColor, formatPercent } from '@/lib/utils'
@@ -295,12 +296,12 @@ export function AIInsights() {
                   <label htmlFor="sentiment-text" className="text-sm font-medium">
                     Text to analyze
                   </label>
-                  <textarea
+                  <Textarea
                     id="sentiment-text"
                     value={sentimentText}
                     onChange={(e) => setSentimentText(e.target.value)}
                     placeholder="Paste a news headline, article excerpt, or any financial text..."
-                    className="w-full h-32 px-3 py-2 text-sm rounded-md border border-input bg-transparent resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
+                    className="h-32"
                     aria-label="Text for sentiment analysis"
                   />
                 </div>

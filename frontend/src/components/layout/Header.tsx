@@ -17,15 +17,16 @@ import { useNavigate } from 'react-router-dom'
 interface HeaderProps {
   connected: boolean
   warningCount?: number
+  compact?: boolean
 }
 
-export function Header({ connected, warningCount = 0 }: HeaderProps) {
+export function Header({ connected, warningCount = 0, compact = false }: HeaderProps) {
   const { isDark, toggleTheme, currentUser, logout } = useApp()
   const navigate = useNavigate()
 
   return (
     <header
-      className="flex items-center justify-between h-14 px-4 border-b border-border bg-card/80 backdrop-blur-sm shrink-0"
+      className="flex items-center justify-between h-14 px-4 border-b border-border bg-card/80 backdrop-blur-sm shrink-0 w-full"
       role="banner"
     >
       {/* Left: breadcrumb / page title area */}

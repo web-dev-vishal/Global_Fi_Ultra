@@ -136,11 +136,14 @@ export class UserService {
             logger.info('User logged in successfully', { userId: user._id, email });
 
             // Remove password hash from response
-            const userObj = user.toObject();
+            const userObj = user.toObject ? user.toObject() : { ...user };
             delete userObj.passwordHash;
 
-            // Return { user } so UserController can destructure result.user correctly
-            return { user: userObj };
+            // Generate a session token (uuid-based until JWT is configured)
+            const { v4: uuidv4 } = await import('uuid');
+            const token = uuidv4();
+
+            return { token, user: userObj };
         } catch (error) {
             logger.error('Error in loginUser', { email, error: error.message });
             throw error;

@@ -86,26 +86,26 @@ export class BaseApiClient {
     _handleError(error) {
         // Timeout
         if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-            return new ExternalAPIError('E1001', this.name, 'Request timeout', error);
+            return new ExternalAPIError(`Request timeout for ${this.name}`, this.name, error.message);
         }
 
         // Rate limit (429)
         if (error.response?.status === 429) {
-            return new ExternalAPIError('E1002', this.name, 'Rate limit exceeded', error);
+            return new ExternalAPIError(`Rate limit exceeded for ${this.name}`, this.name, error.message);
         }
 
         // Client error (4xx)
         if (error.response?.status >= 400 && error.response?.status < 500) {
-            return new ExternalAPIError('E1004', this.name, `Invalid response: ${error.response?.status}`, error);
+            return new ExternalAPIError(`Invalid response ${error.response?.status} from ${this.name}`, this.name, error.message);
         }
 
         // Server error (5xx)
         if (error.response?.status >= 500) {
-            return new ExternalAPIError('E1001', this.name, `Server error: ${error.response?.status}`, error);
+            return new ExternalAPIError(`Server error ${error.response?.status} from ${this.name}`, this.name, error.message);
         }
 
         // Network error
-        return new ExternalAPIError('E1001', this.name, error.message, error);
+        return new ExternalAPIError(error.message || `Network error for ${this.name}`, this.name, error.message);
     }
 
     // Get circuit breaker status

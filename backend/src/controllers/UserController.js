@@ -155,10 +155,15 @@ export class UserController {
                 message: 'Login successful',
                 token: result.token,  // JWT token
                 user: {
-                    id: result.user._id,
+                    _id: result.user._id,
                     email: result.user.email,
-                    name: result.user.name,
-                    // Don't include password or sensitive data
+                    firstName: result.user.firstName,
+                    lastName: result.user.lastName,
+                    fullName: result.user.fullName,
+                    isActive: result.user.isActive,
+                    preferences: result.user.preferences,
+                    createdAt: result.user.createdAt,
+                    updatedAt: result.user.updatedAt,
                 }
             });
         } catch (error) {

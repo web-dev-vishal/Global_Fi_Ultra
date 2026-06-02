@@ -1,6 +1,6 @@
 import React from 'react'
 import { Moon, Sun, Bell, Wifi, WifiOff, User, LogOut, Settings, ChevronDown, Menu, Zap } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,

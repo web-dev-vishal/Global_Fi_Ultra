@@ -1,6 +1,8 @@
 // User management - CRUD with email uniqueness enforcement
 
+import jwt from 'jsonwebtoken';
 import { logger } from '../config/logger.js';
+import { config } from '../config/environment.js';
 
 export class UserService {
     constructor({ userRepository }) {
@@ -139,8 +141,15 @@ export class UserService {
             const userObj = user.toObject();
             delete userObj.passwordHash;
 
-            // Return { user } so UserController can destructure result.user correctly
-            return { user: userObj };
+            // Generate JWT token
+            const token = jwt.sign(
+                { userId: userObj._id, email: userObj.email },
+                config.security.jwtSecret,
+                { expiresIn: config.security.jwtExpiresIn }
+            );
+
+            // Return { token, user } so UserController can use both
+            return { token, user: userObj };
         } catch (error) {
             logger.error('Error in loginUser', { email, error: error.message });
             throw error;

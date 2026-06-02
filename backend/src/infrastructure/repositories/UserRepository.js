@@ -7,7 +7,15 @@ export class UserRepository {
     // Create new user
     async create(userData) {
         try {
-            const user = new User(userData);
+            // Hash password before saving if provided as plain text
+            const dataToSave = { ...userData };
+            if (dataToSave.password) {
+                const bcrypt = await import('bcrypt');
+                dataToSave.passwordHash = await bcrypt.default.hash(dataToSave.password, 10);
+                delete dataToSave.password;
+            }
+
+            const user = new User(dataToSave);
             await user.save();
             logger.info('User created', { userId: user._id, email: user.email });
             return user;

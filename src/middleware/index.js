@@ -32,3 +32,6 @@ export { requestLogger } from './requestLogger.js';
 
 // ─── Input Validation ────────────────────────────────────────────────────────
 export { validateRequest } from './validateRequest.js';
+
+// ─── Authentication ───────────────────────────────────────────────────────────
+export { requireAuth, optionalAuth } from './authMiddleware.js';

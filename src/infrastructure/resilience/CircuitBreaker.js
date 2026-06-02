@@ -31,7 +31,7 @@ export class CircuitBreaker {
     async execute(fn) {
         if (this.state === CircuitState.OPEN) {
             if (Date.now() < this.nextAttemptTime) {
-                throw new CircuitBreakerError(this.name, `Circuit is OPEN until ${new Date(this.nextAttemptTime).toISOString()}`);
+                throw new CircuitBreakerError(this.name);
             }
             this._setState(CircuitState.HALF_OPEN);
         }

@@ -33,6 +33,10 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.string().transform(Number).default('900000'),
   RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number).default('100'),
 
+  // JWT Authentication
+  JWT_SECRET: z.string().default('globalfi-ultra-dev-secret-change-in-production'),
+  JWT_EXPIRES_IN: z.string().default('7d'),
+
   // Circuit breaker
   CIRCUIT_BREAKER_THRESHOLD: z.string().transform(Number).default('3'),
   CIRCUIT_BREAKER_TIMEOUT: z.string().transform(Number).default('30000'),
@@ -110,6 +114,8 @@ export const config = {
     corsOrigins: env.CORS_ORIGIN.split(',').map(s => s.trim()),
     rateLimitWindowMs: env.RATE_LIMIT_WINDOW_MS,
     rateLimitMaxRequests: env.RATE_LIMIT_MAX_REQUESTS,
+    jwtSecret: env.JWT_SECRET,
+    jwtExpiresIn: env.JWT_EXPIRES_IN,
   },
 
   circuitBreaker: {

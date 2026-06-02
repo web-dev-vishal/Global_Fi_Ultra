@@ -60,7 +60,7 @@ export class FinancialDataService {
 
         // Process results
         const data = {
-            stocks: null,
+            stock: null,
             crypto: null,
             forex: null,
             news: [],
@@ -70,7 +70,7 @@ export class FinancialDataService {
         const errors = [];
 
         const serviceNames = ['alpha_vantage', 'coingecko', 'exchangerate_api', 'newsapi', 'fred', 'finnhub'];
-        const dataKeys = ['stocks', 'crypto', 'forex', 'news', 'economic', 'marketNews'];
+        const dataKeys = ['stock', 'crypto', 'forex', 'news', 'economic', 'marketNews'];
 
         results.forEach((result, index) => {
             const service = serviceNames[index];

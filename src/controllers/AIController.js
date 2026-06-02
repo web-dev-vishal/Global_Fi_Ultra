@@ -32,7 +32,7 @@ export class AIController {
       }
 
       this.logger.info('Sentiment analysis request', {
-        requestId: req.id,
+        requestId: req.requestId,
         type,
         textLength: text.length
       });
@@ -45,7 +45,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Sentiment analysis failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -69,7 +69,7 @@ export class AIController {
       }
 
       this.logger.info('Asset analysis request', {
-        requestId: req.id,
+        requestId: req.requestId,
         symbol
       });
 
@@ -81,7 +81,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Asset analysis failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -105,7 +105,7 @@ export class AIController {
       }
 
       this.logger.info('Asset comparison request', {
-        requestId: req.id,
+        requestId: req.requestId,
         assetsCount: assets.length
       });
 
@@ -117,7 +117,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Asset comparison failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -141,7 +141,7 @@ export class AIController {
       }
 
       this.logger.info('Recommendation request', {
-        requestId: req.id,
+        requestId: req.requestId,
         riskTolerance: userProfile.riskTolerance
       });
 
@@ -157,7 +157,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Recommendation generation failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -181,7 +181,7 @@ export class AIController {
       }
 
       this.logger.info('Portfolio analysis request', {
-        requestId: req.id,
+        requestId: req.requestId,
         holdingsCount: holdings.length
       });
 
@@ -196,7 +196,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Portfolio analysis failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -220,7 +220,7 @@ export class AIController {
       }
 
       this.logger.info('Price prediction request', {
-        requestId: req.id,
+        requestId: req.requestId,
         symbol,
         daysAhead
       });
@@ -238,7 +238,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Price prediction failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -262,7 +262,7 @@ export class AIController {
       }
 
       this.logger.info('Movement explanation request', {
-        requestId: req.id,
+        requestId: req.requestId,
         symbol,
         changePercent
       });
@@ -279,7 +279,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Movement explanation failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -303,7 +303,7 @@ export class AIController {
       }
 
       this.logger.info('News impact analysis request', {
-        requestId: req.id,
+        requestId: req.requestId,
         articlesCount: newsArticles.length
       });
 
@@ -315,7 +315,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('News impact analysis failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -339,7 +339,7 @@ export class AIController {
       }
 
       this.logger.info('News summary request', {
-        requestId: req.id,
+        requestId: req.requestId,
         articlesCount: newsArticles.length
       });
 
@@ -354,7 +354,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('News summary generation failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -385,7 +385,7 @@ export class AIController {
       }
 
       this.logger.info('Job submission request', {
-        requestId: req.id,
+        requestId: req.requestId,
         jobType
       });
 
@@ -404,7 +404,7 @@ export class AIController {
       }
     } catch (error) {
       this.logger.error('Job submission failed', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 
@@ -433,7 +433,7 @@ export class AIController {
       });
     } catch (error) {
       this.logger.error('Failed to get queue stats', {
-        requestId: req.id,
+        requestId: req.requestId,
         error: error.message
       });
 

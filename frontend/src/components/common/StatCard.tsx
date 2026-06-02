@@ -46,9 +46,12 @@ export function StatCard({
     >
       <div
         className={cn(
-          'relative rounded-xl border border-border/60 bg-card overflow-hidden',
-          'bg-gradient-to-br', accentMap[accent],
-          onClick && 'cursor-pointer hover:border-border transition-colors',
+          'relative rounded-xl border bg-[#131D2E] overflow-hidden',
+          accent === 'green'  ? 'border-emerald-500/20' :
+          accent === 'red'    ? 'border-red-500/20' :
+          accent === 'purple' ? 'border-purple-500/20' :
+          'border-slate-700/50',
+          onClick && 'cursor-pointer hover:border-slate-600 transition-colors',
           className
         )}
         onClick={onClick}
@@ -66,14 +69,14 @@ export function StatCard({
           ) : (
             <>
               <div className="flex items-start justify-between mb-2.5">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
+                <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">{title}</p>
                 {icon && (
-                  <div className="text-muted-foreground/40 -mt-0.5" aria-hidden="true">{icon}</div>
+                  <div className="text-slate-600 -mt-0.5" aria-hidden="true">{icon}</div>
                 )}
               </div>
 
               <p
-                className="text-2xl font-bold tracking-tight tabular-nums text-foreground"
+                className="text-2xl font-bold tracking-tight tabular-nums text-white"
                 aria-label={`${title}: ${displayValue}`}
               >
                 {displayValue}
@@ -86,14 +89,14 @@ export function StatCard({
                       'inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded-md',
                       isPos && 'bg-emerald-500/10 text-emerald-400',
                       isNeg && 'bg-red-500/10 text-red-400',
-                      !isPos && !isNeg && 'bg-muted text-muted-foreground'
+                      !isPos && !isNeg && 'bg-slate-700/40 text-slate-400'
                     )}
                   >
                     {isPos ? <TrendingUp className="h-3 w-3" /> : isNeg ? <TrendingDown className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                     {formatPercent(change)}
                   </span>
                   {changeLabel && (
-                    <span className="text-xs text-muted-foreground">{changeLabel}</span>
+                    <span className="text-xs text-slate-500">{changeLabel}</span>
                   )}
                 </div>
               )}

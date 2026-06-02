@@ -21,13 +21,13 @@ export function EmptyState({ icon, title, description, action, className }: Empt
       role="status"
     >
       {icon && (
-        <div className="mb-4 p-4 rounded-2xl bg-muted/60 text-muted-foreground/40" aria-hidden="true">
+        <div className="mb-4 p-4 rounded-2xl bg-slate-800/60 text-slate-500" aria-hidden="true">
           {icon}
         </div>
       )}
-      <p className="text-sm font-semibold text-foreground mb-1">{title}</p>
+      <p className="text-sm font-semibold text-slate-200 mb-1">{title}</p>
       {description && (
-        <p className="text-xs text-muted-foreground max-w-xs leading-relaxed mb-4">{description}</p>
+        <p className="text-xs text-slate-500 max-w-xs leading-relaxed mb-4">{description}</p>
       )}
       {action && (
         <Button size="sm" onClick={action.onClick}>{action.label}</Button>

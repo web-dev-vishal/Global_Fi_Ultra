@@ -9,23 +9,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-white shadow-lg shadow-primary/25 hover:bg-primary/90 hover:shadow-primary/40',
+          'bg-primary text-white shadow-sm shadow-primary/20 hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25',
         destructive:
           'bg-destructive text-white shadow-sm hover:bg-destructive/90',
         outline:
-          'border border-border bg-transparent text-foreground hover:bg-accent hover:border-border/60',
+          'border border-border bg-card text-foreground hover:bg-secondary hover:border-border/80',
         secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/70',
+          'bg-secondary text-secondary-foreground border border-border/60 hover:bg-accent',
         ghost:
-          'text-muted-foreground hover:bg-accent hover:text-foreground',
+          'text-muted-foreground hover:bg-secondary hover:text-foreground',
         link:
           'text-primary underline-offset-4 hover:underline h-auto p-0',
         success:
-          'bg-emerald-600 text-white shadow-sm shadow-emerald-600/25 hover:bg-emerald-500',
+          'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700',
         warning:
-          'bg-amber-500 text-white shadow-sm hover:bg-amber-400',
+          'bg-amber-500 text-white shadow-sm hover:bg-amber-600',
         subtle:
-          'bg-primary/10 text-primary hover:bg-primary/20',
+          'bg-primary/8 text-primary border border-primary/15 hover:bg-primary/12',
       },
       size: {
         default:   'h-9 px-4 py-2',

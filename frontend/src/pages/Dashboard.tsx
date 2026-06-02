@@ -25,7 +25,7 @@ export function Dashboard() {
   const news    = (data?.data?.news ?? []) as any[]
 
   return (
-    <div className="p-5 sm:p-6 max-w-[1700px] mx-auto page-enter">
+    <div className="p-5 sm:p-6 max-w-[1700px] mx-auto page-enter animate-fade-in">
       {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>

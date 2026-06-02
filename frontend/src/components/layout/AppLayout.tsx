@@ -1,15 +1,16 @@
-import React, { useState, createContext, useContext } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { useApp } from '@/context/AppContext'
+import { SidebarProvider, useSidebar } from '@/context/SidebarContext'
 import type { FinancialDataResponse, AIMessage } from '@/types'
 
 // ─── Shared WebSocket Context ─────────────────────────────────────────────────
 
-interface SystemWarning  { id: string; service: string; message: string; severity: string; timestamp: string }
+interface SystemWarning       { id: string; service: string; message: string; severity: string; timestamp: string }
 interface CircuitBreakerChange { id: string; service: string; state: string; timestamp: string }
 
 export interface WebSocketContextValue {
@@ -30,20 +31,20 @@ export function useSharedWebSocket(): WebSocketContextValue {
   return ctx
 }
 
-// ─── AppLayout ────────────────────────────────────────────────────────────────
+// ─── Inner shell (needs SidebarProvider in scope) ────────────────────────────
 
-export function AppLayout() {
-  const [collapsed, setCollapsed] = useState(false)
+function AppShell() {
+  const { isCollapsed, toggle } = useSidebar()
   const [mobileOpen, setMobileOpen] = useState(false)
   const { toasts, removeToast } = useApp()
   const ws = useWebSocket({ autoConnect: true })
 
   return (
     <WSCtx.Provider value={ws}>
-      <div className="flex h-screen overflow-hidden bg-[#0B1220]">
+      <div className="flex h-screen overflow-hidden bg-slate-100 dark:bg-[#0B1220]">
         {/* Desktop sidebar */}
         <div className="hidden md:flex shrink-0">
-          <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+          <Sidebar collapsed={isCollapsed} onToggle={toggle} />
         </div>
 
         {/* Mobile sidebar */}
@@ -66,5 +67,15 @@ export function AppLayout() {
         </div>
       </div>
     </WSCtx.Provider>
+  )
+}
+
+// ─── AppLayout ────────────────────────────────────────────────────────────────
+
+export function AppLayout() {
+  return (
+    <SidebarProvider>
+      <AppShell />
+    </SidebarProvider>
   )
 }

@@ -1,18 +1,27 @@
-import { useState, useCallback } from 'react'
-import type { Theme } from '@/types'
+import { useEffect, useState } from 'react'
 
-// This design uses a fixed dark palette (#3b444b background).
-// Theme toggle is kept for user preference but the palette is always dark-slate.
+type Theme = 'dark' | 'light'
+
 export function useTheme() {
-  const [theme] = useState<Theme>('dark')
+  const [theme, setTheme] = useState<Theme>(() => {
+    const stored = localStorage.getItem('gf-theme') as Theme | null
+    if (stored) return stored
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  })
 
-  const setTheme = useCallback((_t: Theme) => {
-    // palette is fixed — no-op
-  }, [])
+  useEffect(() => {
+    const root = document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+      root.classList.remove('light')
+    } else {
+      root.classList.remove('dark')
+      root.classList.add('light')
+    }
+    localStorage.setItem('gf-theme', theme)
+  }, [theme])
 
-  const toggleTheme = useCallback(() => {
-    // palette is fixed — no-op
-  }, [])
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark')
 
-  return { theme, setTheme, toggleTheme, isDark: true }
+  return { theme, setTheme, toggleTheme, isDark: theme === 'dark' }
 }

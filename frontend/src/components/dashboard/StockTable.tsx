@@ -9,21 +9,21 @@ function fmtUSD(v: number) {
 
 export function StockTable({ loading }: { loading?: boolean }) {
   if (loading) return (
-    <div className="bg-[#131D2E] border border-slate-700/50 rounded-xl p-5">
+    <div className="bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl p-5">
       <div className="space-y-3">{[...Array(5)].map((_, i) => <SkeletonCard key={i} rows={2} />)}</div>
     </div>
   )
 
   return (
-    <div className="bg-[#131D2E] border border-slate-700/50 rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-700/50">
-        <h3 className="text-sm font-semibold text-white">Tracked Assets</h3>
+    <div className="bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-slate-700/50">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Tracked Assets</h3>
         <span className="text-xs text-slate-500">{MOCK_ASSETS.length} instruments</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm" aria-label="Tracked assets">
           <thead>
-            <tr className="border-b border-slate-700/40">
+            <tr className="border-b border-slate-100 dark:border-slate-700/40">
               {['Asset', 'Type', 'Price', 'Exchange'].map((h, i) => (
                 <th key={h} className={`py-2.5 text-xs font-medium text-slate-500 ${i === 0 ? 'text-left px-5' : i === 3 ? 'text-right px-5 hidden sm:table-cell' : 'text-right px-4'}`}>{h}</th>
               ))}
@@ -34,10 +34,10 @@ export function StockTable({ loading }: { loading?: boolean }) {
               const mock_change = ((Math.random() - 0.48) * 5)
               const pos = mock_change >= 0
               return (
-                <tr key={a._id} className="border-b border-slate-700/30 hover:bg-slate-800/25 transition-colors">
+                <tr key={a._id} className="border-b border-slate-100 dark:border-slate-700/30 hover:bg-slate-50 dark:hover:bg-slate-800/25 transition-colors">
                   <td className="px-5 py-3">
                     <div>
-                      <p className="font-semibold text-white">{a.symbol}</p>
+                      <p className="font-semibold text-slate-900 dark:text-white">{a.symbol}</p>
                       <p className="text-xs text-slate-500 truncate max-w-[120px]">{a.name}</p>
                     </div>
                   </td>
@@ -50,7 +50,7 @@ export function StockTable({ loading }: { loading?: boolean }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <p className="font-semibold text-white tabular-nums">{fmtUSD(a.currentPrice)}</p>
+                    <p className="font-semibold text-slate-900 dark:text-white tabular-nums">{fmtUSD(a.currentPrice)}</p>
                     <div className={`flex items-center justify-end gap-0.5 text-xs ${pos ? 'text-emerald-400' : 'text-red-400'}`}>
                       {pos ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                       {Math.abs(mock_change).toFixed(2)}%

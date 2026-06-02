@@ -7,25 +7,46 @@
 @layer base {
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-feature-settings: "cv02","cv03","cv04","cv11","ss01"; -webkit-text-size-adjust: 100%; }
+
+  /* ─── Default (light) ─── */
   body {
-    background: #0B1220;
-    color: #fff;
+    background: #f1f5f9;
+    color: #0f172a;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
+
+  /* ─── Dark mode body ─── */
+  html.dark body {
+    background: #0B1220;
+    color: #ffffff;
+  }
+
+  /* ─── Scrollbar ─── */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.4); border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.7); }
+
   ::selection { background: rgba(59,130,246,0.25); }
-  :focus-visible { outline: 2px solid #3B82F6; outline-offset: 2px; border-radius: 4px; }
+
+  /* ─── Focus states ─── */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.5), 0 0 0 3px #f1f5f9;
+    border-radius: 4px;
+  }
+  html.dark :focus-visible {
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.5), 0 0 0 3px #0B1220;
+  }
 }
 
 @layer utilities {
   .tabular-nums { font-variant-numeric: tabular-nums; }
   .page-enter { animation: pageEnter 0.2s ease-out both; }
+  .animate-fade-in { animation: fadeIn 0.2s ease-out both; }
 }
 
 @keyframes pageEnter {
@@ -49,11 +70,18 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Shimmer skeleton — light */
 .shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+/* Shimmer skeleton — dark */
+html.dark .shimmer {
   background: linear-gradient(90deg, #131D2E 25%, #1a2640 50%, #131D2E 75%);
   background-size: 1200px 100%;
   animation: shimmer 1.4s ease-in-out infinite;

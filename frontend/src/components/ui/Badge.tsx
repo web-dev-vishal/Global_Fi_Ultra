@@ -4,13 +4,13 @@ import React from 'react'
 type BadgeVariant = 'blue' | 'green' | 'red' | 'amber' | 'slate' | 'purple' | 'cyan'
 
 const V: Record<BadgeVariant, string> = {
-  blue:   'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  green:  'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  red:    'bg-red-500/10 text-red-400 border-red-500/20',
-  amber:  'bg-amber-500/10 text-amber-400 border-amber-500/20',
-  slate:  'bg-slate-700/60 text-slate-400 border-slate-700',
-  purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  cyan:   'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+  blue:   'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20',
+  green:  'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+  red:    'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
+  amber:  'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
+  slate:  'bg-slate-200 dark:bg-slate-700/60 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700',
+  purple: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20',
+  cyan:   'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border-cyan-500/20',
 }
 
 const D: Record<BadgeVariant, string> = {

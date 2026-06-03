@@ -61,21 +61,21 @@ export function StockTable({ loading }: { loading?: boolean }) {
                   <td className="px-4 py-3 text-right">
                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border
                       ${a.type === 'stock'
-                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                        ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20'
                         : a.type === 'crypto'
-                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                        : 'bg-purple-500/10 text-purple-400 border-purple-500/20'}`}>
+                        ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20'
+                        : 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20'}`}>
                       {a.type}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <p className="font-semibold text-[var(--text-1)] font-mono tabular-nums">{fmtUSD(a.currentPrice)}</p>
-                    <div className={`flex items-center justify-end gap-0.5 text-xs ${pos ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <div className={`flex items-center justify-end gap-0.5 text-xs ${pos ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                       {pos
                         ? <ArrowUpRight className="h-3 w-3" />
                         : <ArrowDownRight className="h-3 w-3" />
                       }
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${pos ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
                         {Math.abs(mockChange).toFixed(2)}%
                       </span>
                     </div>

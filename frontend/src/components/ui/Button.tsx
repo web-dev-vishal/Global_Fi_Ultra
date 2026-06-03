@@ -41,7 +41,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center rounded-lg border font-medium transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0B1220] disabled:pointer-events-none disabled:bg-slate-700 disabled:text-slate-500 disabled:border-transparent ${V[variant]} ${S[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg border font-medium transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0B1220] disabled:pointer-events-none disabled:bg-slate-200 dark:disabled:bg-slate-700 disabled:text-slate-400 dark:disabled:text-slate-500 disabled:border-transparent ${V[variant]} ${S[size]} ${className}`}
       disabled={disabled || loading}
       aria-busy={loading}
       {...props}

@@ -34,7 +34,7 @@ export function SystemWarnings() {
             {systemWarnings.map(w => (
               /* Warning banner per spec */
               <div key={w.id} className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 mt-0.5 shrink-0" />
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-amber-700 dark:text-amber-300">{w.service}</p>
                   <p className="text-xs text-amber-600 dark:text-amber-400">{w.message}</p>

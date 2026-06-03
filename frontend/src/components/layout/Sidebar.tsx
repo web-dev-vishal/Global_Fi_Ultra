@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils'
 
 interface NavItem { label: string; href: string; icon: React.ElementType; badge?: string }
 
-// ─── Section groups ───────────────────────────────────────────────────────────
 const SECTION_1: NavItem[] = [
   { label: 'Dashboard',  href: '/',           icon: LayoutDashboard },
   { label: 'Markets',    href: '/markets',    icon: TrendingUp },
@@ -39,11 +38,11 @@ function NavItemRow({ item, collapsed, active }: { item: NavItem; collapsed: boo
       title={collapsed ? label : undefined}
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-100 group',
+        'relative flex items-center gap-3 rounded-r-lg px-3 py-2 text-sm transition-colors duration-100 group',
         collapsed && 'justify-center px-0',
         active
-          ? 'border-l-2 border-blue-500 bg-blue-500/10 font-medium text-blue-600 dark:text-blue-400'
-          : 'border-l-2 border-transparent font-normal text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-800 dark:hover:text-slate-200',
+          ? 'border-l-2 border-l-blue-500 bg-blue-500/10 font-medium text-blue-700 dark:text-blue-400 light:bg-blue-50 light:text-blue-700'
+          : 'border-l-2 border-l-transparent font-normal text-slate-500 dark:text-[var(--text-2)] hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-[var(--text-1)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-1'
       )}
     >
@@ -65,17 +64,17 @@ function NavItemRow({ item, collapsed, active }: { item: NavItem; collapsed: boo
 
       {/* Badge — only when expanded */}
       {!collapsed && badge && (
-        <span className="text-[10px] bg-blue-500/20 text-blue-500 dark:text-blue-400 border border-blue-500/30 px-1.5 rounded-full font-semibold leading-4">
+        <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 rounded-full font-semibold leading-4">
           {badge}
         </span>
       )}
 
-      {/* Collapsed tooltip */}
+      {/* Collapsed tooltip — Level 4 */}
       {collapsed && (
-        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-opacity duration-150 flex items-center gap-1.5">
+        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white dark:bg-[#1A2540] border border-slate-200 dark:border-[var(--border-md)] rounded-xl text-xs font-medium text-slate-800 dark:text-[var(--text-1)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-opacity duration-150 flex items-center gap-1.5">
           {label}
           {badge && (
-            <span className="text-[9px] bg-blue-500/20 text-blue-500 dark:text-blue-400 border border-blue-500/30 px-1 rounded-full font-semibold">
+            <span className="text-[9px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1 rounded-full font-semibold">
               {badge}
             </span>
           )}
@@ -91,7 +90,9 @@ function SectionLabel({ label, collapsed }: { label: string; collapsed: boolean 
   }
   return (
     <div className="flex items-center gap-2 px-3 mb-1 mt-3">
-      <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-600 font-semibold">{label}</span>
+      <span className="text-[10px] uppercase tracking-widest text-[var(--text-3)] font-semibold">
+        {label}
+      </span>
     </div>
   )
 }
@@ -129,7 +130,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 transition={{ duration: 0.14 }}
                 className="overflow-hidden min-w-0"
               >
-                <span className="text-sm font-semibold text-slate-900 dark:text-white whitespace-nowrap tracking-tight">
+                <span className="text-sm font-semibold text-slate-900 dark:text-[var(--text-1)] whitespace-nowrap tracking-tight">
                   Global-Fi <span className="text-blue-500 dark:text-blue-400">Ultra</span>
                 </span>
               </motion.div>
@@ -161,11 +162,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           to="/settings"
           title={collapsed ? 'Settings' : undefined}
           className={cn(
-            'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors duration-100 group',
+            'relative flex items-center gap-3 rounded-r-lg px-3 py-2 text-sm transition-colors duration-100 group',
             collapsed && 'justify-center px-0',
             pathname === '/settings'
-              ? 'border-l-2 border-blue-500 bg-blue-500/10 font-medium text-blue-600 dark:text-blue-400'
-              : 'border-l-2 border-transparent font-normal text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-800 dark:hover:text-slate-200',
+              ? 'border-l-2 border-l-blue-500 bg-blue-500/10 font-medium text-blue-700 dark:text-blue-400'
+              : 'border-l-2 border-l-transparent font-normal text-slate-500 dark:text-[var(--text-2)] hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-[var(--text-1)]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-1'
           )}
         >
@@ -179,14 +180,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             )}
           </AnimatePresence>
           {collapsed && (
-            <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-opacity">
+            <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white dark:bg-[#1A2540] border border-slate-200 dark:border-[var(--border-md)] rounded-xl text-xs font-medium text-slate-800 dark:text-[var(--text-1)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-opacity">
               Settings
             </div>
           )}
         </NavLink>
       </div>
 
-      {/* ─── Toggle button ─── */}
+      {/* ─── Collapse toggle ─── */}
       <button
         onClick={onToggle}
         title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}

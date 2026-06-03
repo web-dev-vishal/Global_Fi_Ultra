@@ -4,24 +4,65 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════
+   Global-Fi Ultra — Premium Colour System (CSS custom properties)
+   Dark (default) and .light overrides
+   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --bg-page:   #0B1220;
+  --bg-nav:    #0D1526;
+  --bg-card:   #131D2E;
+  --bg-raised: #1A2540;
+  --bg-input:  #0F1929;
+  --border:    rgba(100,116,139,0.22);
+  --border-md: rgba(100,116,139,0.35);
+  --text-1:    #F8FAFC;
+  --text-2:    #94A3B8;
+  --text-3:    #64748B;
+  --accent:    #3B82F6;
+  --success:   #10B981;
+  --danger:    #EF4444;
+  --warning:   #F59E0B;
+  --purple:    #8B5CF6;
+}
+
+.light {
+  --bg-page:   #F8FAFC;
+  --bg-nav:    #FFFFFF;
+  --bg-card:   #FFFFFF;
+  --bg-raised: #F1F5F9;
+  --bg-input:  #F8FAFC;
+  --border:    rgba(15,23,42,0.08);
+  --border-md: rgba(15,23,42,0.14);
+  --text-1:    #0F172A;
+  --text-2:    #475569;
+  --text-3:    #94A3B8;
+}
+
 @layer base {
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-feature-settings: "cv02","cv03","cv04","cv11","ss01"; -webkit-text-size-adjust: 100%; }
 
-  /* ─── Default (light) ─── */
+  /* ─── Default dark body ─── */
   body {
-    background: #f1f5f9;
-    color: #0f172a;
+    background: var(--bg-page);
+    color: var(--text-1);
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ─── Dark mode body ─── */
+  /* ─── Light mode body ─── */
+  html.light body {
+    background: var(--bg-page);
+    color: var(--text-1);
+  }
+
+  /* ─── Dark mode body (legacy .dark class) ─── */
   html.dark body {
     background: #0B1220;
-    color: #ffffff;
+    color: #F8FAFC;
   }
 
   /* ─── Scrollbar ─── */
@@ -35,11 +76,8 @@
   /* ─── Focus states ─── */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(59,130,246,0.5), 0 0 0 3px #f1f5f9;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.5), 0 0 0 3px var(--bg-page);
     border-radius: 4px;
-  }
-  html.dark :focus-visible {
-    box-shadow: 0 0 0 2px rgba(59,130,246,0.5), 0 0 0 3px #0B1220;
   }
 }
 
@@ -74,15 +112,15 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Shimmer skeleton — light */
+/* Shimmer skeleton — dark (default) */
 .shimmer {
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background: linear-gradient(90deg, #131D2E 25%, #1a2640 50%, #131D2E 75%);
   background-size: 1200px 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }
-/* Shimmer skeleton — dark */
-html.dark .shimmer {
-  background: linear-gradient(90deg, #131D2E 25%, #1a2640 50%, #131D2E 75%);
+/* Shimmer skeleton — light override */
+html.light .shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
   background-size: 1200px 100%;
   animation: shimmer 1.4s ease-in-out infinite;
 }

@@ -17,7 +17,11 @@ function relTime(s: string) {
   return `${Math.floor(h / 24)}d ago`
 }
 
-const condColor = { above: 'text-emerald-600 dark:text-emerald-400', below: 'text-red-600 dark:text-red-400', equals: 'text-blue-600 dark:text-blue-400' } as const
+const condColor: Record<string, string> = {
+  above:  'text-emerald-600 dark:text-emerald-400',
+  below:  'text-red-600 dark:text-red-400',
+  equals: 'text-blue-600 dark:text-blue-400',
+}
 
 interface AlertListProps {
   alerts: Alert[]; loading?: boolean
@@ -26,43 +30,57 @@ interface AlertListProps {
 
 export function AlertList({ alerts, loading, onDelete, onToggle, deletingId }: AlertListProps) {
   if (loading) return (
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl px-5 py-2">
+    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl px-5 py-2">
       {[...Array(4)].map((_, i) => <SkeletonRow key={i} />)}
     </div>
   )
 
   if (alerts.length === 0) return (
-    <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl">
+    <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl">
       <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 mb-4">
-        <Bell className="h-8 w-8 text-slate-400 dark:text-slate-600" />
+        <Bell className="h-8 w-8 text-slate-400 dark:text-[var(--text-3)]" />
       </div>
-      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">No alerts here</p>
-      <p className="text-xs text-slate-400 dark:text-slate-600 mt-1">Create an alert to get notified on price moves.</p>
+      <p className="text-sm font-medium text-[var(--text-1)]">No alerts here</p>
+      <p className="text-xs text-[var(--text-3)] mt-1">Create an alert to get notified on price moves.</p>
     </div>
   )
 
   return (
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden">
+    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl overflow-hidden">
       <AnimatePresence>
         {alerts.map((a, i) => (
-          <motion.div key={a._id} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+          <motion.div
+            key={a._id}
+            initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10, height: 0 }} transition={{ delay: i * 0.025, duration: 0.2 }}
-            className="flex items-center gap-4 px-5 py-3.5 border-b border-slate-100 dark:border-slate-700/40 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors group">
+            className="flex items-center gap-4 px-5 py-3.5 border-b border-slate-100 dark:border-slate-800/60 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group"
+          >
+            {/* Status icon */}
             <div className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
-              a.isTriggered ? 'bg-blue-500/10' : a.isActive ? 'bg-emerald-500/10' : 'bg-slate-100 dark:bg-slate-700/40'
+              a.isTriggered ? 'bg-blue-500/10'
+              : a.isActive  ? 'bg-emerald-500/10'
+              : 'bg-slate-100 dark:bg-slate-800/40'
             }`}>
-              {a.isTriggered ? <CheckCircle2 className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-                : a.isActive ? <Bell className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
-                : <BellOff className="h-4 w-4 text-slate-400 dark:text-slate-500" />}
+              {a.isTriggered
+                ? <CheckCircle2 className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+                : a.isActive
+                ? <Bell className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                : <BellOff className="h-4 w-4 text-[var(--text-3)]" />
+              }
             </div>
+
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-slate-900 dark:text-white">{a.symbol}</span>
-                <span className="text-xs text-slate-500 capitalize bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{a.assetType}</span>
-                <span className={`text-xs font-medium ${condColor[a.condition]}`}>{a.condition} {fmtUSD(a.targetPrice)}</span>
+                <span className="font-bold text-[var(--text-1)]">{a.symbol}</span>
+                <span className="text-xs text-[var(--text-3)] capitalize bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{a.assetType}</span>
+                <span className={`text-xs font-medium ${condColor[a.condition] ?? 'text-[var(--text-2)]'}`}>
+                  {a.condition} {fmtUSD(a.targetPrice)}
+                </span>
               </div>
-              <div className="flex items-center gap-3 mt-0.5 flex-wrap text-xs text-slate-500">
-                {a.currentPrice && <span>Current: <span className="text-slate-600 dark:text-slate-400">{fmtUSD(a.currentPrice)}</span></span>}
+              <div className="flex items-center gap-3 mt-0.5 flex-wrap text-xs text-[var(--text-3)]">
+                {a.currentPrice !== undefined && (
+                  <span>Current: <span className="text-[var(--text-2)]">{fmtUSD(a.currentPrice)}</span></span>
+                )}
                 {a.isTriggered && a.triggeredAt && (
                   <span className="text-blue-500 dark:text-blue-400 flex items-center gap-1">
                     <Clock className="h-3 w-3" />Triggered {relTime(a.triggeredAt)} @ {fmtUSD(a.triggeredPrice)}
@@ -71,14 +89,20 @@ export function AlertList({ alerts, loading, onDelete, onToggle, deletingId }: A
                 {a.notes && <span className="truncate max-w-[160px]">{a.notes}</span>}
               </div>
             </div>
+
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
               {!a.isTriggered && (
                 <Button variant="ghost" size="icon-sm" onClick={() => onToggle(a)} aria-label={a.isActive ? 'Deactivate' : 'Activate'}>
                   {a.isActive ? <BellOff className="h-3.5 w-3.5" /> : <Bell className="h-3.5 w-3.5" />}
                 </Button>
               )}
-              <Button variant="ghost" size="icon-sm" className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                loading={deletingId === a._id} onClick={() => onDelete(a._id)} aria-label="Delete alert">
+              <Button
+                variant="ghost" size="icon-sm"
+                className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                loading={deletingId === a._id}
+                onClick={() => onDelete(a._id)}
+                aria-label="Delete alert"
+              >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>

@@ -10,7 +10,7 @@ import type { FinancialDataResponse, AIMessage } from '@/types'
 
 // ─── Shared WebSocket Context ─────────────────────────────────────────────────
 
-interface SystemWarning       { id: string; service: string; message: string; severity: string; timestamp: string }
+interface SystemWarning        { id: string; service: string; message: string; severity: string; timestamp: string }
 interface CircuitBreakerChange { id: string; service: string; state: string; timestamp: string }
 
 export interface WebSocketContextValue {
@@ -31,7 +31,7 @@ export function useSharedWebSocket(): WebSocketContextValue {
   return ctx
 }
 
-// ─── Inner shell (needs SidebarProvider in scope) ────────────────────────────
+// ─── Inner shell ──────────────────────────────────────────────────────────────
 
 function AppShell() {
   const { isCollapsed, toggle } = useSidebar()
@@ -41,20 +41,24 @@ function AppShell() {
 
   return (
     <WSCtx.Provider value={ws}>
-      <div className="flex h-screen overflow-hidden bg-slate-100 dark:bg-[#0B1220]">
+      {/* Level 0 — page background */}
+      <div className="flex h-screen overflow-hidden bg-[var(--bg-page)]">
         {/* Desktop sidebar */}
         <div className="hidden md:flex shrink-0">
           <Sidebar collapsed={isCollapsed} onToggle={toggle} />
         </div>
 
-        {/* Mobile sidebar */}
+        {/* Mobile sidebar — Level 1 */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetContent side="left" className="p-0 w-[220px] bg-[#0D1526] border-r border-slate-800">
+          <SheetContent
+            side="left"
+            className="p-0 w-[220px] bg-white dark:bg-[#0D1526] border-r border-slate-200 dark:border-slate-800"
+          >
             <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
 
-        {/* Main */}
+        {/* Main content column */}
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
           <TopBar
             connected={ws.connected}

@@ -9,18 +9,37 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Nested tokens: bg-page, bg-card, bg-sidebar (used as bg.page etc.)
+        // ── Global-Fi Ultra premium colour tokens ──────────────────────────
+        gf: {
+          page:    '#0B1220',
+          nav:     '#0D1526',
+          card:    '#131D2E',
+          raised:  '#1A2540',
+          border:  'rgba(100,116,139,0.22)',
+          accent:  '#3B82F6',
+          success: '#10B981',
+          danger:  '#EF4444',
+          warning: '#F59E0B',
+          purple:  '#8B5CF6',
+        },
+        'gf-light': {
+          page:   '#F8FAFC',
+          nav:    '#FFFFFF',
+          card:   '#FFFFFF',
+          raised: '#F1F5F9',
+          border: 'rgba(15,23,42,0.08)',
+        },
+        // Legacy flat aliases kept for backward compatibility
         bg: {
           page:    '#0B1220',
           card:    '#131D2E',
           sidebar: '#0D1526',
         },
-        // Flat aliases for direct use: bg-page, bg-card, bg-sidebar
         'bg-page':    '#0B1220',
         'bg-card':    '#131D2E',
         'bg-sidebar': '#0D1526',
         border: {
-          DEFAULT: 'rgba(100,116,139,0.2)',
+          DEFAULT: 'rgba(100,116,139,0.22)',
         },
       },
       animation: {

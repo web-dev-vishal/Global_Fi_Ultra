@@ -34,12 +34,14 @@ export function Alerts() {
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Price Alerts</h1>
-            {usingMock && <Badge variant="amber">Demo</Badge>}
+            <h1 className="text-xl font-semibold text-[var(--text-1)]">Price Alerts</h1>
+            {usingMock && <Badge variant="blue">Demo</Badge>}
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">Get notified when assets hit your target prices</p>
+          <p className="text-xs text-[var(--text-3)] mt-0.5">Get notified when assets hit your target prices</p>
         </div>
-        <Button size="sm" onClick={() => setCreate(true)} icon={<Plus className="h-3.5 w-3.5" />}>New Alert</Button>
+        <Button size="sm" onClick={() => setCreate(true)} icon={<Plus className="h-3.5 w-3.5" />}>
+          New Alert
+        </Button>
       </div>
 
       <AlertStats alerts={alerts} activeTab={tab} onTab={setTab} loading={loading} />

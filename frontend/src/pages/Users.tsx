@@ -33,12 +33,14 @@ export function Users() {
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Users</h1>
-            {usingMock && <Badge variant="amber">Demo</Badge>}
+            <h1 className="text-xl font-semibold text-[var(--text-1)]">Users</h1>
+            {usingMock && <Badge variant="blue">Demo</Badge>}
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">Manage user accounts</p>
+          <p className="text-xs text-[var(--text-3)] mt-0.5">Manage user accounts</p>
         </div>
-        <Button size="sm" onClick={() => setCreate(true)} icon={<Plus className="h-3.5 w-3.5" />}>New User</Button>
+        <Button size="sm" onClick={() => setCreate(true)} icon={<Plus className="h-3.5 w-3.5" />}>
+          New User
+        </Button>
       </div>
 
       <div className="mb-4"><UserSearch value={search} onChange={setSearch} /></div>
@@ -46,16 +48,22 @@ export function Users() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 mt-5">
-          <Button variant="ghost" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>Previous</Button>
-          <span className="text-sm text-slate-500">Page {page} of {totalPages}</span>
-          <Button variant="ghost" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>Next</Button>
+          <Button variant="ghost" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+            Previous
+          </Button>
+          <span className="text-sm text-[var(--text-2)]">Page {page} of {totalPages}</span>
+          <Button variant="ghost" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+            Next
+          </Button>
         </div>
       )}
 
       <AnimatePresence>
         {createOpen && (
-          <CreateUserModal onClose={() => setCreate(false)}
-            onCreated={u => { addUser(u); toast.success('User created', `${u.firstName} ${u.lastName} added.`) }} />
+          <CreateUserModal
+            onClose={() => setCreate(false)}
+            onCreated={u => { addUser(u); toast.success('User created', `${u.firstName} ${u.lastName} added.`) }}
+          />
         )}
       </AnimatePresence>
     </div>

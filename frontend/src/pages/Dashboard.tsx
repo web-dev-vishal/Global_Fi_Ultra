@@ -25,14 +25,16 @@ export function Dashboard() {
   const news    = (data?.data?.news ?? []) as any[]
 
   return (
+    /* Page wrapper */
     <div className="p-5 sm:p-6 max-w-[1700px] mx-auto page-enter animate-fade-in">
+      {/* Page header */}
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
-            {usingMock && <Badge variant="amber">Demo Data</Badge>}
+            <h1 className="text-xl font-semibold text-[var(--text-1)] tracking-tight">Dashboard</h1>
+            {usingMock && <Badge variant="blue">Demo Data</Badge>}
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[var(--text-3)] mt-0.5">
             {lastUpdated
               ? `Updated ${new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(lastUpdated)}`
               : 'Loading market data…'}

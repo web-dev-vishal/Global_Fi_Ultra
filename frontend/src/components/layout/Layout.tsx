@@ -15,13 +15,16 @@ export function Layout({ actionSlot }: LayoutProps) {
   const { connected, systemWarnings } = useSharedWebSocket()
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100 dark:bg-[#0B1220]">
+    <div className="flex h-screen overflow-hidden bg-[var(--bg-page)]">
       <div className="hidden md:flex">
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
       </div>
 
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="p-0 w-[220px] border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0D1526]">
+        <SheetContent
+          side="left"
+          className="p-0 w-[220px] bg-white dark:bg-[#0D1526] border-r border-slate-200 dark:border-slate-800"
+        >
           <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
         </SheetContent>
       </Sheet>

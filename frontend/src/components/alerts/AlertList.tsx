@@ -38,7 +38,7 @@ export function AlertList({ alerts, loading, onDelete, onToggle, deletingId }: A
   if (alerts.length === 0) return (
     <div className="flex flex-col items-center justify-center py-16 text-center bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl">
       <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800/60 mb-4">
-        <Bell className="h-8 w-8 text-slate-400 dark:text-[var(--text-3)]" />
+        <Bell className="h-8 w-8 text-slate-500 dark:text-[var(--text-3)]" />
       </div>
       <p className="text-sm font-medium text-[var(--text-1)]">No alerts here</p>
       <p className="text-xs text-[var(--text-3)] mt-1">Create an alert to get notified on price moves.</p>

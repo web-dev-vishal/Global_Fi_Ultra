@@ -11,13 +11,13 @@ function fmtUSD(v: number) {
 
 // Per-coin accent colours (Step 6 — Crypto Coin Rows)
 const COIN_STYLES: Record<string, { bg: string; text: string }> = {
-  BTC:  { bg: 'bg-amber-500/20',  text: 'text-amber-400'  },
-  ETH:  { bg: 'bg-blue-500/20',   text: 'text-blue-400'   },
-  SOL:  { bg: 'bg-violet-500/20', text: 'text-violet-400' },
-  BNB:  { bg: 'bg-yellow-500/20', text: 'text-yellow-400' },
-  XRP:  { bg: 'bg-cyan-500/20',   text: 'text-cyan-400'   },
-  ADA:  { bg: 'bg-teal-500/20',   text: 'text-teal-400'   },
-  DOGE: { bg: 'bg-amber-500/20',  text: 'text-amber-300'  },
+  BTC:  { bg: 'bg-amber-500/20',  text: 'text-amber-700 dark:text-amber-400'  },
+  ETH:  { bg: 'bg-blue-500/20',   text: 'text-blue-700 dark:text-blue-400'    },
+  SOL:  { bg: 'bg-violet-500/20', text: 'text-violet-700 dark:text-violet-400' },
+  BNB:  { bg: 'bg-yellow-500/20', text: 'text-yellow-700 dark:text-yellow-400' },
+  XRP:  { bg: 'bg-cyan-500/20',   text: 'text-cyan-700 dark:text-cyan-400'    },
+  ADA:  { bg: 'bg-teal-500/20',   text: 'text-teal-700 dark:text-teal-400'    },
+  DOGE: { bg: 'bg-amber-500/20',  text: 'text-amber-600 dark:text-amber-300'  },
 }
 
 function MiniSparkline({ positive }: { positive: boolean }) {
@@ -75,8 +75,7 @@ export function CryptoWidget({ cryptos = [], loading }: CryptoWidgetProps) {
                 )}
                 <div>
                   <p className="text-sm font-medium text-[var(--text-1)]">{c.name}</p>
-                  <p className={cn('text-xs uppercase font-semibold', coinStyle.text)}>{c.symbol}</p>
-                </div>
+                  <p className={cn('text-xs uppercase font-semibold', coinStyle.text)}>{c.symbol}</p>                </div>
               </div>
 
               <div className="flex items-center gap-3">
@@ -88,8 +87,8 @@ export function CryptoWidget({ cryptos = [], loading }: CryptoWidgetProps) {
                   <span className={cn(
                     'inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-medium tabular-nums',
                     pos
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-red-500/10 text-red-600 dark:text-red-400'
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                      : 'bg-red-500/10 text-red-700 dark:text-red-400'
                   )}>
                     {pos ? '+' : ''}{c.price_change_percentage_24h.toFixed(2)}%
                   </span>

@@ -30,11 +30,11 @@ interface KPICardsProps {
 
 // Per-card: top border accent + icon colour
 const ACCENTS = [
-  { topBorder: 'border-t-blue-500',    iconColor: 'text-blue-500 dark:text-blue-400'      },
-  { topBorder: 'border-t-slate-500',   iconColor: 'text-slate-500 dark:text-slate-400'    },
-  { topBorder: 'border-t-emerald-500', iconColor: 'text-emerald-500 dark:text-emerald-400' },
-  { topBorder: 'border-t-violet-500',  iconColor: 'text-violet-500 dark:text-violet-400'  },
-  { topBorder: 'border-t-amber-500',   iconColor: 'text-amber-500 dark:text-amber-400'    },
+  { topBorder: 'border-t-blue-500',    iconColor: 'text-blue-600 dark:text-blue-400'      },
+  { topBorder: 'border-t-slate-500',   iconColor: 'text-slate-600 dark:text-slate-400'    },
+  { topBorder: 'border-t-emerald-500', iconColor: 'text-emerald-600 dark:text-emerald-400' },
+  { topBorder: 'border-t-violet-500',  iconColor: 'text-violet-600 dark:text-violet-400'  },
+  { topBorder: 'border-t-amber-500',   iconColor: 'text-amber-600 dark:text-amber-400'    },
 ]
 
 export function KPICards({ stock, loading }: KPICardsProps) {
@@ -96,8 +96,8 @@ export function KPICards({ stock, loading }: KPICardsProps) {
               <span className={cn(
                 'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium',
                 c.deltaPos
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                  : 'bg-red-500/10 text-red-600 dark:text-red-400'
+                  ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
+                  : 'bg-red-500/10 text-red-700 dark:text-red-400'
               )}>
                 {c.deltaPos ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {c.sub}

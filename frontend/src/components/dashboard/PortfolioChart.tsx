@@ -97,7 +97,7 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
                 <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} className="dark:[stroke:#1e293b] [stroke:#e2e8f0]" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid, #e2e8f0)" vertical={false} className="dark:[stroke:#1e293b] [stroke:#e2e8f0]" />
             <XAxis
               dataKey="label"
               tick={{ fontSize: 10, fill: 'var(--text-3)' }}

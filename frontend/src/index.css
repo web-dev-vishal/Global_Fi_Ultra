@@ -9,34 +9,36 @@
    Dark (default) and .light overrides
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --bg-page:   #0B1220;
-  --bg-nav:    #0D1526;
-  --bg-card:   #131D2E;
-  --bg-raised: #1A2540;
-  --bg-input:  #0F1929;
-  --border:    rgba(100,116,139,0.22);
-  --border-md: rgba(100,116,139,0.35);
-  --text-1:    #F8FAFC;
-  --text-2:    #94A3B8;
-  --text-3:    #64748B;
-  --accent:    #3B82F6;
-  --success:   #10B981;
-  --danger:    #EF4444;
-  --warning:   #F59E0B;
-  --purple:    #8B5CF6;
+  --bg-page:    #0B1220;
+  --bg-nav:     #0D1526;
+  --bg-card:    #131D2E;
+  --bg-raised:  #1A2540;
+  --bg-input:   #0F1929;
+  --border:     rgba(100,116,139,0.22);
+  --border-md:  rgba(100,116,139,0.35);
+  --text-1:     #F8FAFC;
+  --text-2:     #94A3B8;
+  --text-3:     #64748B;
+  --accent:     #3B82F6;
+  --success:    #10B981;
+  --danger:     #EF4444;
+  --warning:    #F59E0B;
+  --purple:     #8B5CF6;
+  --chart-grid: #1e293b;
 }
 
 .light {
-  --bg-page:   #F8FAFC;
-  --bg-nav:    #FFFFFF;
-  --bg-card:   #FFFFFF;
-  --bg-raised: #F1F5F9;
-  --bg-input:  #F8FAFC;
-  --border:    rgba(15,23,42,0.08);
-  --border-md: rgba(15,23,42,0.14);
-  --text-1:    #0F172A;
-  --text-2:    #475569;
-  --text-3:    #94A3B8;
+  --bg-page:    #F8FAFC;
+  --bg-nav:     #FFFFFF;
+  --bg-card:    #FFFFFF;
+  --bg-raised:  #F1F5F9;
+  --bg-input:   #F8FAFC;
+  --border:     rgba(15,23,42,0.08);
+  --border-md:  rgba(15,23,42,0.14);
+  --text-1:     #0F172A;
+  --text-2:     #475569;
+  --text-3:     #94A3B8;
+  --chart-grid: #e2e8f0;
 }
 
 @layer base {

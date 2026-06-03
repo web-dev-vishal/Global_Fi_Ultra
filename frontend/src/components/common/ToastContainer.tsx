@@ -9,25 +9,25 @@ interface ToastContainerProps {
   onRemove: (id: string) => void
 }
 
-const config = {
+const config: Record<string, { icon: React.ElementType; cls: string; iconCls: string }> = {
   success: {
-    icon: CheckCircle2,
-    cls: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300',
+    icon:    CheckCircle2,
+    cls:     'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
     iconCls: 'text-emerald-400',
   },
   error: {
-    icon: AlertCircle,
-    cls: 'border-red-500/25 bg-red-500/10 text-red-300',
+    icon:    AlertCircle,
+    cls:     'border-red-500/20 bg-red-500/10 text-red-300',
     iconCls: 'text-red-400',
   },
   warning: {
-    icon: AlertTriangle,
-    cls: 'border-amber-500/25 bg-amber-500/10 text-amber-300',
+    icon:    AlertTriangle,
+    cls:     'border-amber-500/20 bg-amber-500/10 text-amber-300',
     iconCls: 'text-amber-400',
   },
   info: {
-    icon: Info,
-    cls: 'border-blue-500/25 bg-blue-500/10 text-blue-300',
+    icon:    Info,
+    cls:     'border-blue-500/20 bg-blue-500/10 text-blue-300',
     iconCls: 'text-blue-400',
   },
 }
@@ -42,7 +42,7 @@ export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
     >
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => {
-          const { icon: Icon, cls, iconCls } = config[toast.type]
+          const { icon: Icon, cls, iconCls } = config[toast.type] ?? config.info
           return (
             <motion.div
               key={toast.id}

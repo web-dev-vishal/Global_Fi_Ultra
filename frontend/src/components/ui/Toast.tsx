@@ -16,9 +16,9 @@ interface ToastCtx {
   toasts: Toast[]
   toast: {
     success: (title: string, msg?: string) => void
-    error: (title: string, msg?: string) => void
+    error:   (title: string, msg?: string) => void
     warning: (title: string, msg?: string) => void
-    info: (title: string, msg?: string) => void
+    info:    (title: string, msg?: string) => void
   }
   dismiss: (id: string) => void
 }
@@ -34,13 +34,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 4000)
   }, [])
 
-  const dismiss = useCallback((id: string) => setToasts(p => p.filter(t => t.id !== id)), [])
+  const dismiss = useCallback((id: string) =>
+    setToasts(p => p.filter(t => t.id !== id)), [])
 
   const toast = {
     success: (t: string, m?: string) => add('success', t, m),
-    error:   (t: string, m?: string) => add('error', t, m),
+    error:   (t: string, m?: string) => add('error',   t, m),
     warning: (t: string, m?: string) => add('warning', t, m),
-    info:    (t: string, m?: string) => add('info', t, m),
+    info:    (t: string, m?: string) => add('info',    t, m),
   }
 
   return (
@@ -57,43 +58,69 @@ export function useToast() {
   return ctx.toast
 }
 
-const icons: Record<ToastType, React.ElementType> = {
-  success: CheckCircle2, error: AlertCircle, warning: AlertTriangle, info: Info,
+const ICONS: Record<ToastType, React.ElementType> = {
+  success: CheckCircle2,
+  error:   AlertCircle,
+  warning: AlertTriangle,
+  info:    Info,
 }
 
-const styles: Record<ToastType, string> = {
-  success: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300',
-  error:   'border-red-500/30 bg-red-500/10 text-red-300',
-  warning: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
-  info:    'border-blue-500/30 bg-blue-500/10 text-blue-300',
+// Status badge colours aligned with spec
+const STYLES: Record<ToastType, string> = {
+  success: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
+  error:   'border-red-500/20    bg-red-500/10     text-red-300',
+  warning: 'border-amber-500/20  bg-amber-500/10   text-amber-300',
+  info:    'border-blue-500/20   bg-blue-500/10    text-blue-300',
+}
+
+const ICON_COLOR: Record<ToastType, string> = {
+  success: 'text-emerald-400',
+  error:   'text-red-400',
+  warning: 'text-amber-400',
+  info:    'text-blue-400',
 }
 
 function ToastContainer() {
   const ctx = useContext(ToastContext)!
+
   return (
-    <div className="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    /* Level 4 — toasts float above everything */
+    <div
+      className="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 max-w-sm w-full pointer-events-none"
+      aria-live="polite"
+      role="region"
+      aria-label="Notifications"
+    >
       <AnimatePresence>
         {ctx.toasts.map(t => {
-          const Icon = icons[t.type]
+          const Icon = ICONS[t.type]
           return (
             <motion.div
               key={t.id}
               initial={{ opacity: 0, y: 16, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              animate={{ opacity: 1, y: 0,  scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
               className={cn(
-                'pointer-events-auto flex items-start gap-3 rounded-xl border p-3.5 backdrop-blur-sm',
-                'shadow-[0_8px_32px_rgba(0,0,0,0.5)]',
-                styles[t.type]
+                'pointer-events-auto flex items-start gap-3 rounded-xl border p-3.5',
+                'shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-sm',
+                STYLES[t.type]
               )}
+              role="alert"
+              aria-atomic="true"
             >
-              <Icon className="h-4 w-4 mt-0.5 shrink-0" />
+              <Icon className={cn('h-4 w-4 mt-0.5 shrink-0', ICON_COLOR[t.type])} aria-hidden="true" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold">{t.title}</p>
-                {t.message && <p className="text-xs opacity-80 mt-0.5">{t.message}</p>}
+                <p className="text-sm font-semibold leading-tight">{t.title}</p>
+                {t.message && (
+                  <p className="text-xs mt-0.5 opacity-80 leading-relaxed">{t.message}</p>
+                )}
               </div>
-              <button onClick={() => ctx.dismiss(t.id)} className="shrink-0 opacity-60 hover:opacity-100 transition-opacity">
+              <button
+                onClick={() => ctx.dismiss(t.id)}
+                className="shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+                aria-label="Dismiss"
+              >
                 <X className="h-3.5 w-3.5" />
               </button>
             </motion.div>

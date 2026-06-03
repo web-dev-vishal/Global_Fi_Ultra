@@ -3,9 +3,11 @@ import { Search, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 const FRED_SERIES = [
-  { value: 'GDP', label: 'GDP' }, { value: 'UNRATE', label: 'Unemployment' },
-  { value: 'CPIAUCSL', label: 'CPI / Inflation' }, { value: 'FEDFUNDS', label: 'Fed Funds Rate' },
-  { value: 'DGS10', label: '10-Year Treasury' },
+  { value: 'GDP',      label: 'GDP' },
+  { value: 'UNRATE',   label: 'Unemployment' },
+  { value: 'CPIAUCSL', label: 'CPI / Inflation' },
+  { value: 'FEDFUNDS', label: 'Fed Funds Rate' },
+  { value: 'DGS10',    label: '10-Year Treasury' },
 ]
 
 interface MarketQueryFormProps {
@@ -14,18 +16,26 @@ interface MarketQueryFormProps {
   onCurrency: (v: string) => void; onFred: (v: string) => void; onFetch: () => void
 }
 
-const inputCls = 'w-full h-9 bg-slate-100 dark:bg-slate-800/60 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 focus:border-blue-500 focus:outline-none rounded-lg px-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors'
-const labelCls = 'block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wide'
+const inputCls = 'w-full h-9 bg-slate-50 dark:bg-[var(--bg-input)] border border-slate-200 dark:border-[var(--border)] hover:border-slate-300 dark:hover:border-[var(--border-md)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-blue-500/30 rounded-lg px-3 text-sm text-[var(--text-1)] placeholder:text-[var(--text-3)] transition-all duration-150'
+const labelCls = 'block text-xs font-medium text-[var(--text-2)] mb-1.5 uppercase tracking-wider'
 
-export function MarketQueryForm({ symbol, crypto, currency, fredSeries, loading, onSymbol, onCrypto, onCurrency, onFred, onFetch }: MarketQueryFormProps) {
+export function MarketQueryForm({
+  symbol, crypto, currency, fredSeries, loading,
+  onSymbol, onCrypto, onCurrency, onFred, onFetch,
+}: MarketQueryFormProps) {
   return (
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200 dark:border-slate-700/50 rounded-xl p-5">
+    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl p-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div>
           <label className={labelCls}>Stock Symbol</label>
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            <input value={symbol} onChange={e => onSymbol(e.target.value.toUpperCase())} placeholder="AAPL, TSLA…" className={inputCls + ' pl-8'} />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--text-3)]" />
+            <input
+              value={symbol}
+              onChange={e => onSymbol(e.target.value.toUpperCase())}
+              placeholder="AAPL, TSLA…"
+              className={inputCls + ' pl-8'}
+            />
           </div>
         </div>
         <div>
@@ -43,7 +53,9 @@ export function MarketQueryForm({ symbol, crypto, currency, fredSeries, loading,
           </select>
         </div>
       </div>
-      <Button onClick={onFetch} loading={loading} icon={<Zap className="h-3.5 w-3.5" />}>Fetch Live Data</Button>
+      <Button onClick={onFetch} loading={loading} icon={<Zap className="h-3.5 w-3.5" />}>
+        Fetch Live Data
+      </Button>
     </div>
   )
 }

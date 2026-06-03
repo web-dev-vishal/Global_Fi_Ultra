@@ -137,3 +137,29 @@ export const MOCK_PORTFOLIO_CHART = Array.from({ length: 30 }, (_, i) => ({
   day: `Day ${i + 1}`,
   value: 100000 + i * 800 + Math.sin(i * 0.3) * 4000 + (Math.random() - 0.4) * 3000,
 }))
+
+// Per-range portfolio data sets
+export const MOCK_PORTFOLIO_CHART_1D = Array.from({ length: 24 }, (_, i) => ({
+  label: `${i}:00`,
+  value: 124000 + Math.sin(i * 0.5) * 1200 + (Math.random() - 0.45) * 800,
+}))
+
+export const MOCK_PORTFOLIO_CHART_1W = Array.from({ length: 7 }, (_, i) => ({
+  label: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
+  value: 120000 + i * 600 + Math.sin(i * 0.8) * 2000 + (Math.random() - 0.4) * 1500,
+}))
+
+export const MOCK_PORTFOLIO_CHART_1M = Array.from({ length: 30 }, (_, i) => ({
+  label: `Day ${i + 1}`,
+  value: 100000 + i * 800 + Math.sin(i * 0.3) * 4000 + (Math.random() - 0.4) * 3000,
+}))
+
+export const MOCK_PORTFOLIO_CHART_3M = Array.from({ length: 12 }, (_, i) => ({
+  label: `Wk ${i + 1}`,
+  value: 95000 + i * 2200 + Math.sin(i * 0.4) * 5000 + (Math.random() - 0.38) * 3500,
+}))
+
+export const MOCK_PORTFOLIO_CHART_1Y = Array.from({ length: 12 }, (_, i) => ({
+  label: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+  value: 82000 + i * 3800 + Math.sin(i * 0.5) * 7000 + (Math.random() - 0.36) * 4500,
+}))

@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { MOCK_PORTFOLIO_CHART } from '@/data/mockData'
+import {
+  MOCK_PORTFOLIO_CHART_1D,
+  MOCK_PORTFOLIO_CHART_1W,
+  MOCK_PORTFOLIO_CHART_1M,
+  MOCK_PORTFOLIO_CHART_3M,
+  MOCK_PORTFOLIO_CHART_1Y,
+} from '@/data/mockData'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 
@@ -8,6 +14,22 @@ interface PortfolioChartProps { loading?: boolean }
 
 const TIME_RANGES = ['1D', '1W', '1M', '3M', '1Y'] as const
 type TimeRange = typeof TIME_RANGES[number]
+
+const RANGE_DATA: Record<TimeRange, { label: string; value: number }[]> = {
+  '1D': MOCK_PORTFOLIO_CHART_1D,
+  '1W': MOCK_PORTFOLIO_CHART_1W,
+  '1M': MOCK_PORTFOLIO_CHART_1M,
+  '3M': MOCK_PORTFOLIO_CHART_3M,
+  '1Y': MOCK_PORTFOLIO_CHART_1Y,
+}
+
+const RANGE_LABEL: Record<TimeRange, string> = {
+  '1D': 'Today (hourly)',
+  '1W': 'Last 7 days',
+  '1M': 'Last 30 days',
+  '3M': 'Last 3 months',
+  '1Y': 'Last 12 months',
+}
 
 export function PortfolioChart({ loading }: PortfolioChartProps) {
   const [activeRange, setActiveRange] = useState<TimeRange>('1M')
@@ -19,10 +41,10 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
     </div>
   )
 
-  const data   = MOCK_PORTFOLIO_CHART
-  const latest = data[data.length - 1]?.value ?? 0
-  const first  = data[0]?.value ?? 0
-  const gain   = latest - first
+  const data    = RANGE_DATA[activeRange]
+  const latest  = data[data.length - 1]?.value ?? 0
+  const first   = data[0]?.value ?? 0
+  const gain    = latest - first
   const gainPct = ((gain / first) * 100).toFixed(2)
 
   return (
@@ -31,7 +53,7 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-[var(--text-1)]">Portfolio Value</h3>
-          <p className="text-xs text-[var(--text-3)] mt-0.5">Last 30 days</p>
+          <p className="text-xs text-[var(--text-3)] mt-0.5">{RANGE_LABEL[activeRange]}</p>
         </div>
 
         <div className="flex flex-col items-end gap-2">
@@ -40,7 +62,7 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
               ${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(latest)}
             </p>
             <p className={cn('text-xs font-medium', gain >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
-              {gain >= 0 ? '+' : ''}{gainPct}% this month
+              {gain >= 0 ? '+' : ''}{gainPct}% this period
             </p>
           </div>
 
@@ -49,9 +71,10 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
             {TIME_RANGES.map(r => (
               <button
                 key={r}
+                type="button"
                 onClick={() => setActiveRange(r)}
                 className={cn(
-                  'text-xs px-2.5 py-1 rounded-md transition-colors',
+                  'text-xs px-2.5 py-1 rounded-md transition-colors cursor-pointer',
                   r === activeRange
                     ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-[var(--text-1)] font-medium shadow-sm'
                     : 'text-[var(--text-3)] hover:text-[var(--text-2)]'
@@ -70,19 +93,16 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
           <AreaChart data={data} margin={{ top: 4, right: 0, left: -30, bottom: 0 }}>
             <defs>
               <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                {/* Fill area: rgba(59,130,246,0.10) */}
                 <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.20} />
                 <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
               </linearGradient>
             </defs>
-            {/* Grid lines: dark #1e293b / light #e2e8f0 */}
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} className="dark:[stroke:#1e293b] [stroke:#e2e8f0]" />
             <XAxis
-              dataKey="day"
+              dataKey="label"
               tick={{ fontSize: 10, fill: 'var(--text-3)' }}
               axisLine={false} tickLine={false}
-              interval={6}
-              tickFormatter={(v) => v.replace('Day ', '')}
+              interval="preserveStartEnd"
             />
             <YAxis
               tick={{ fontSize: 10, fill: 'var(--text-3)' }}
@@ -101,7 +121,6 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
               formatter={(v) => [`$${new Intl.NumberFormat('en-US').format(Math.round(Number(v)))}`, 'Value']}
               cursor={{ stroke: 'rgba(59,130,246,0.4)', strokeWidth: 1 }}
             />
-            {/* Line stroke: #3B82F6 */}
             <Area type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} fill="url(#portfolioGrad)" />
           </AreaChart>
         </ResponsiveContainer>

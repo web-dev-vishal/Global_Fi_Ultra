@@ -25,7 +25,7 @@ export function SystemWarnings() {
 
       <div className="p-4">
         {systemWarnings.length === 0 ? (
-          <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 py-2">
+          <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 py-2">
             <CheckCircle2 className="h-4 w-4" />
             <span>No active warnings — system running cleanly</span>
           </div>

@@ -44,7 +44,7 @@ export function ErrorLogs() {
             {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-14 rounded-lg" />)}
           </div>
         ) : logs.length === 0 ? (
-          <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 py-4">
+          <div className="flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-400 py-4">
             <CheckCircle2 className="h-4 w-4" />No error logs — system is running cleanly
           </div>
         ) : (

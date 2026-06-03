@@ -133,7 +133,7 @@ export function Register() {
 
         <p className="text-sm text-center text-[var(--text-2)] mt-5">
           Already have an account?{' '}
-          <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+          <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors">
             Sign in
           </Link>
         </p>

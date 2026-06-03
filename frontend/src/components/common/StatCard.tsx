@@ -79,9 +79,9 @@ export function StatCard({
                 <div className="flex items-center gap-1.5 mt-2">
                   <span className={cn(
                     'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full',
-                    isPos && 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-                    isNeg && 'bg-red-500/10 text-red-600 dark:text-red-400',
-                    !isPos && !isNeg && 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                    isPos && 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+                    isNeg && 'bg-red-500/10 text-red-700 dark:text-red-400',
+                    !isPos && !isNeg && 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
                   )}>
                     {isPos
                       ? <TrendingUp  className="h-3 w-3" />

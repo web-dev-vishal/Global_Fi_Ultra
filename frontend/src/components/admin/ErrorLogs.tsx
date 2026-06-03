@@ -32,7 +32,7 @@ export function ErrorLogs() {
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-[var(--border)]">
         <div className="flex items-center gap-2">
           {/* Purple for AI/special features per spec */}
-          <FileText className="h-4 w-4 text-purple-400" />
+          <FileText className="h-4 w-4 text-purple-700 dark:text-purple-400" />
           <h3 className="text-sm font-semibold text-[var(--text-1)]">Recent Error Logs</h3>
         </div>
         {!loading && <Badge variant="slate">{logs.length} entries</Badge>}

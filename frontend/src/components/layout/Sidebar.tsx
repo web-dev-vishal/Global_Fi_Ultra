@@ -64,7 +64,7 @@ function NavItemRow({ item, collapsed, active }: { item: NavItem; collapsed: boo
 
       {/* Badge — only when expanded */}
       {!collapsed && badge && (
-        <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 rounded-full font-semibold leading-4">
+        <span className="text-[10px] bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20 px-1.5 rounded-full font-semibold leading-4">
           {badge}
         </span>
       )}
@@ -74,7 +74,7 @@ function NavItemRow({ item, collapsed, active }: { item: NavItem; collapsed: boo
         <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-white dark:bg-[#1A2540] border border-slate-200 dark:border-[var(--border-md)] rounded-xl text-xs font-medium text-slate-800 dark:text-[var(--text-1)] whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none z-50 shadow-xl transition-opacity duration-150 flex items-center gap-1.5">
           {label}
           {badge && (
-            <span className="text-[9px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1 rounded-full font-semibold">
+            <span className="text-[9px] bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20 px-1 rounded-full font-semibold">
               {badge}
             </span>
           )}

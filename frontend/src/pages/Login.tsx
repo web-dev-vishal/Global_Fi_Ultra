@@ -133,7 +133,7 @@ export function Login() {
           <div className="mt-5 space-y-3">
             <p className="text-sm text-center text-[var(--text-2)]">
               No account?{' '}
-              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors">
                 Create one
               </Link>
             </p>

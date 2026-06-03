@@ -24,7 +24,7 @@ export function CacheManagement() {
   return (
     <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Trash2 className="h-4 w-4 text-red-400" />
+        <Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />
         <h3 className="text-sm font-semibold text-[var(--text-1)]">Cache Management</h3>
       </div>
       <p className="text-xs text-[var(--text-2)] mb-4 leading-relaxed">

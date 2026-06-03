@@ -97,7 +97,7 @@ export function AIInsights() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold text-[var(--text-1)]">AI Insights</h1>
             {/* Purple accent for AI feature */}
-            <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full font-semibold">AI</span>
+            <span className="text-[10px] bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded-full font-semibold">AI</span>
             <Badge variant={connected ? 'green' : 'red'} dot>{connected ? 'Live' : 'Offline'}</Badge>
           </div>
           <p className="text-xs text-[var(--text-3)] mt-0.5">Powered by Groq LLaMA — real-time financial intelligence</p>
@@ -110,7 +110,7 @@ export function AIInsights() {
           <Bot className="h-3.5 w-3.5" />AI Chat
         </button>
         <button className={TAB_CLASSES(tab === 'sentiment')} onClick={() => setTab('sentiment')}>
-          <Brain className="h-3.5 w-3.5 text-purple-400" />Sentiment
+          <Brain className="h-3.5 w-3.5 text-purple-700 dark:text-purple-400" />Sentiment
         </button>
         <button className={TAB_CLASSES(tab === 'analysis')}  onClick={() => setTab('analysis')}>
           <BarChart3 className="h-3.5 w-3.5" />Analysis
@@ -127,7 +127,7 @@ export function AIInsights() {
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-[var(--border)] shrink-0">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-purple-500/15 border border-purple-500/25">
-                <Bot className="h-3.5 w-3.5 text-purple-400" />
+                <Bot className="h-3.5 w-3.5 text-purple-700 dark:text-purple-400" />
               </div>
               <span className="text-sm font-semibold text-[var(--text-1)]">Financial AI Assistant</span>
             </div>
@@ -141,7 +141,7 @@ export function AIInsights() {
             {aiMessages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <div className="p-5 rounded-2xl bg-purple-500/10 border border-purple-500/20 mb-4">
-                  <Sparkles className="h-9 w-9 text-purple-400" />
+                  <Sparkles className="h-9 w-9 text-purple-700 dark:text-purple-400" />
                 </div>
                 <h3 className="font-bold text-[var(--text-1)] mb-1">Ask me anything about finance</h3>
                 <p className="text-sm text-[var(--text-2)] max-w-sm mb-5">Analyze markets, explain trends, compare assets, get AI insights.</p>
@@ -169,7 +169,7 @@ export function AIInsights() {
                   <div className={`flex items-center justify-center w-7 h-7 rounded-full shrink-0 ${msg.role === 'user' ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'}`}>
                     {msg.role === 'user'
                       ? <User className="h-3.5 w-3.5 text-white" />
-                      : <Bot className="h-3.5 w-3.5 text-slate-600 dark:text-[var(--text-2)]" />
+                      : <Bot className="h-3.5 w-3.5 text-slate-700 dark:text-[var(--text-2)]" />
                     }
                   </div>
                   <div className={`group relative max-w-[80%] flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
@@ -235,7 +235,7 @@ export function AIInsights() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className={cardCls}>
             <div className="flex items-center gap-2 mb-4">
-              <Brain className="h-4 w-4 text-purple-400" />
+              <Brain className="h-4 w-4 text-purple-700 dark:text-purple-400" />
               <h3 className="text-sm font-semibold text-[var(--text-1)]">Sentiment Analysis</h3>
             </div>
             <div className="space-y-4">

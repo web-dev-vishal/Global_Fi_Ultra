@@ -10,7 +10,7 @@ export function SystemWarnings() {
     <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-[var(--border)]">
         <div className="flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+          <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           <h3 className="text-sm font-semibold text-[var(--text-1)]">System Warnings</h3>
           {systemWarnings.length > 0 && (
             <span className="text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded-full font-medium">

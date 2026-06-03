@@ -41,7 +41,7 @@ export function Markets() {
 
       {loading && (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
           <p className="text-sm text-[var(--text-2)]">Fetching live market data…</p>
         </div>
       )}
@@ -51,7 +51,7 @@ export function Markets() {
       {!loading && !data && (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 mb-4">
-            <TrendingUp className="h-10 w-10 text-slate-400 dark:text-[var(--text-3)]" />
+            <TrendingUp className="h-10 w-10 text-slate-500 dark:text-[var(--text-3)]" />
           </div>
           <h3 className="text-base font-semibold text-[var(--text-1)] mb-1">Ready to fetch live data</h3>
           <p className="text-sm text-[var(--text-2)] max-w-xs mb-5">

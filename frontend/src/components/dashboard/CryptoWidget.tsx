@@ -3,100 +3,123 @@ import { SkeletonRow } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
 import type { CryptoData } from '@/types'
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CryptoWidget — Premium coin price list
+   Clean rows, per-coin color accents, inline sparklines
+═══════════════════════════════════════════════════════════════════════════ */
+
 function fmtUSD(v: number) {
   if (v >= 1000)
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v)
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(v)
 }
 
-// Per-coin accent colours (Step 6 — Crypto Coin Rows)
-const COIN_STYLES: Record<string, { bg: string; text: string }> = {
-  BTC:  { bg: 'bg-amber-500/20',  text: 'text-amber-700 dark:text-amber-400'  },
-  ETH:  { bg: 'bg-blue-500/20',   text: 'text-blue-700 dark:text-blue-400'    },
-  SOL:  { bg: 'bg-violet-500/20', text: 'text-violet-700 dark:text-violet-400' },
-  BNB:  { bg: 'bg-yellow-500/20', text: 'text-yellow-700 dark:text-yellow-400' },
-  XRP:  { bg: 'bg-cyan-500/20',   text: 'text-cyan-700 dark:text-cyan-400'    },
-  ADA:  { bg: 'bg-teal-500/20',   text: 'text-teal-700 dark:text-teal-400'    },
-  DOGE: { bg: 'bg-amber-500/20',  text: 'text-amber-600 dark:text-amber-300'  },
+/* Per-coin accent styles */
+const COIN_COLORS: Record<string, { avatar: string; text: string }> = {
+  BTC:  { avatar: 'bg-[rgba(251,191,36,0.15)] text-[#FBBF24]',  text: 'text-[#FBBF24]' },
+  ETH:  { avatar: 'bg-[rgba(96,165,250,0.15)] text-[#60A5FA]',  text: 'text-[#60A5FA]' },
+  SOL:  { avatar: 'bg-[rgba(167,139,250,0.15)] text-[#A78BFA]', text: 'text-[#A78BFA]' },
+  BNB:  { avatar: 'bg-[rgba(253,224,71,0.15)] text-[#FDE047]',  text: 'text-[#FDE047]' },
+  XRP:  { avatar: 'bg-[rgba(34,211,238,0.15)] text-[#22D3EE]',  text: 'text-[#22D3EE]' },
+  ADA:  { avatar: 'bg-[rgba(52,211,153,0.15)] text-[#34D399]',  text: 'text-[#34D399]' },
+  DOGE: { avatar: 'bg-[rgba(251,146,60,0.15)] text-[#FB923C]',  text: 'text-[#FB923C]' },
+  AVAX: { avatar: 'bg-[rgba(248,113,113,0.15)] text-[#F87171]', text: 'text-[#F87171]' },
+  DOT:  { avatar: 'bg-[rgba(232,121,249,0.15)] text-[#E879F9]', text: 'text-[#E879F9]' },
 }
 
+/* Mini SVG sparkline */
 function MiniSparkline({ positive }: { positive: boolean }) {
-  const pts = Array.from({ length: 8 }, (_, i) => ({
-    x: (i / 7) * 38 + 1,
-    y: 8 + Math.sin(i * (positive ? 0.9 : -0.9) + (positive ? 0 : Math.PI)) * 5,
+  const pts = Array.from({ length: 9 }, (_, i) => ({
+    x: 1 + (i / 8) * 44,
+    y: 8 + Math.sin(i * (positive ? 0.85 : -0.85) + (positive ? 0.2 : Math.PI)) * 5,
   }))
   const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
-  const color = positive ? '#34d399' : '#f87171'
+  const color = positive ? 'var(--success-bright)' : 'var(--danger-bright)'
+
   return (
-    <svg width="40" height="16" viewBox="0 0 40 16" fill="none" aria-hidden="true">
-      <path d={d} stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="46" height="18" viewBox="0 0 46 18" fill="none" aria-hidden="true" className="shrink-0">
+      <path d={d} stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
     </svg>
   )
 }
 
-interface CryptoWidgetProps {
-  cryptos?: CryptoData[]
-  loading?: boolean
-}
+interface CryptoWidgetProps { cryptos?: CryptoData[]; loading?: boolean }
 
 export function CryptoWidget({ cryptos = [], loading }: CryptoWidgetProps) {
   return (
-    /* Level 2 card */
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 dark:border-[var(--border)]">
-        <h3 className="text-sm font-semibold text-[var(--text-1)]">Crypto Markets</h3>
-        <span className="text-xs text-[var(--text-3)] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">24h</span>
+    <div
+      className="rounded-xl bg-[var(--bg-2)] border border-[var(--border-2)] overflow-hidden"
+      style={{ boxShadow: 'var(--shadow-card)' }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--border-1)]">
+        <p className="text-[13px] font-semibold text-[var(--text-1)]">Crypto Markets</p>
+        <span className="text-[10px] font-medium text-[var(--text-3)] bg-[var(--bg-3)] border border-[var(--border-2)] px-2 py-1 rounded-full">
+          24h
+        </span>
       </div>
 
-      <div className="divide-y divide-slate-100 dark:divide-slate-800/60">
+      {/* Coin list */}
+      <div>
         {loading ? (
           <div className="px-5 py-1">
             {[...Array(5)].map((_, i) => <SkeletonRow key={i} />)}
           </div>
-        ) : cryptos.slice(0, 6).map(c => {
-          const pos = c.price_change_percentage_24h >= 0
-          const sym = c.symbol.toUpperCase()
-          const coinStyle = COIN_STYLES[sym] ?? { bg: 'bg-slate-500/20', text: 'text-slate-600 dark:text-slate-400' }
+        ) : (
+          cryptos.slice(0, 6).map((c, idx) => {
+            const pos     = c.price_change_percentage_24h >= 0
+            const sym     = c.symbol.toUpperCase()
+            const colors  = COIN_COLORS[sym] ?? { avatar: 'bg-[var(--bg-4)] text-[var(--text-2)]', text: 'text-[var(--text-2)]' }
+            const isLast  = idx === Math.min(cryptos.length, 6) - 1
 
-          return (
-            <div
-              key={c.id}
-              className="flex items-center justify-between px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                {/* Coin dot with per-symbol colour */}
-                <span className={cn('w-2 h-2 rounded-full shrink-0', coinStyle.bg, coinStyle.text.replace('text-', 'bg-').replace('/20', '/80'))} aria-hidden="true" />
-                {c.image ? (
-                  <img src={c.image} alt={c.name} className="w-7 h-7 rounded-full" loading="lazy" />
-                ) : (
-                  <div className={cn('w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold', coinStyle.bg, coinStyle.text)}>
-                    {c.symbol[0]}
-                  </div>
+            return (
+              <div
+                key={c.id}
+                className={cn(
+                  'flex items-center justify-between px-5 py-3',
+                  'hover:bg-[var(--bg-3)] transition-colors duration-100 cursor-pointer',
+                  !isLast && 'border-b border-[var(--border-1)]'
                 )}
-                <div>
-                  <p className="text-sm font-medium text-[var(--text-1)]">{c.name}</p>
-                  <p className={cn('text-xs uppercase font-semibold', coinStyle.text)}>{c.symbol}</p>                </div>
-              </div>
+              >
+                {/* Left — avatar + name */}
+                <div className="flex items-center gap-3 min-w-0">
+                  {c.image ? (
+                    <img src={c.image} alt={c.name} className="w-7 h-7 rounded-full shrink-0" loading="lazy" />
+                  ) : (
+                    <div className={cn(
+                      'w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0',
+                      colors.avatar
+                    )}>
+                      {sym[0]}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-[var(--text-1)] leading-tight truncate">{c.name}</p>
+                    <p className={cn('text-[10px] font-semibold uppercase leading-tight', colors.text)}>{sym}</p>
+                  </div>
+                </div>
 
-              <div className="flex items-center gap-3">
-                <MiniSparkline positive={pos} />
-                <div className="text-right min-w-[80px]">
-                  <p className="font-mono text-sm font-semibold text-[var(--text-1)] tabular-nums">
-                    {fmtUSD(c.current_price)}
-                  </p>
-                  <span className={cn(
-                    'inline-flex items-center justify-center rounded-full px-2 py-0.5 text-xs font-medium tabular-nums',
-                    pos
-                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                      : 'bg-red-500/10 text-red-700 dark:text-red-400'
-                  )}>
-                    {pos ? '+' : ''}{c.price_change_percentage_24h.toFixed(2)}%
-                  </span>
+                {/* Right — sparkline + price + % */}
+                <div className="flex items-center gap-3 shrink-0">
+                  <MiniSparkline positive={pos} />
+                  <div className="text-right min-w-[88px]">
+                    <p className="num text-[13px] font-semibold text-[var(--text-1)] leading-tight">
+                      {fmtUSD(c.current_price)}
+                    </p>
+                    <span className={cn(
+                      'inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold num leading-none mt-0.5',
+                      pos
+                        ? 'bg-[var(--success-subtle)] text-[var(--success-bright)]'
+                        : 'bg-[var(--danger-subtle)]  text-[var(--danger-bright)]'
+                    )}>
+                      {pos ? '+' : ''}{c.price_change_percentage_24h.toFixed(2)}%
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ import { useApp } from '@/context/AppContext'
 import { SidebarProvider, useSidebar } from '@/context/SidebarContext'
 import type { FinancialDataResponse, AIMessage } from '@/types'
 
-// ─── Shared WebSocket Context ─────────────────────────────────────────────────
+/* ── Shared WebSocket Context ── */
 
 interface SystemWarning        { id: string; service: string; message: string; severity: string; timestamp: string }
 interface CircuitBreakerChange { id: string; service: string; state: string; timestamp: string }
@@ -31,28 +31,28 @@ export function useSharedWebSocket(): WebSocketContextValue {
   return ctx
 }
 
-// ─── Inner shell ──────────────────────────────────────────────────────────────
+/* ── Inner Shell ── */
 
 function AppShell() {
   const { isCollapsed, toggle } = useSidebar()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { toasts, removeToast } = useApp()
   const ws = useWebSocket({ autoConnect: true })
 
   return (
     <WSCtx.Provider value={ws}>
-      {/* Level 0 — page background */}
-      <div className="flex h-screen overflow-hidden bg-[var(--bg-page)]">
+      {/* Root container */}
+      <div className="flex h-screen overflow-hidden bg-[var(--bg-0)]">
+
         {/* Desktop sidebar */}
         <div className="hidden md:flex shrink-0">
           <Sidebar collapsed={isCollapsed} onToggle={toggle} />
         </div>
 
-        {/* Mobile sidebar — Level 1 */}
+        {/* Mobile sidebar — sheet */}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetContent
             side="left"
-            className="p-0 w-[220px] bg-white dark:bg-[#0D1526] border-r border-slate-200 dark:border-slate-800"
+            className="p-0 w-[216px] bg-[var(--bg-1)] border-r border-[var(--border-1)]"
           >
             <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
           </SheetContent>
@@ -65,7 +65,12 @@ function AppShell() {
             warningCount={ws.systemWarnings.length}
             onMobileMenu={() => setMobileOpen(true)}
           />
-          <main className="flex-1 overflow-y-auto" id="main-content" role="main">
+          {/* Page scroll area */}
+          <main
+            className="flex-1 overflow-y-auto overflow-x-hidden"
+            id="main-content"
+            role="main"
+          >
             <Outlet />
           </main>
         </div>
@@ -74,7 +79,7 @@ function AppShell() {
   )
 }
 
-// ─── AppLayout ────────────────────────────────────────────────────────────────
+/* ── AppLayout ── */
 
 export function AppLayout() {
   return (

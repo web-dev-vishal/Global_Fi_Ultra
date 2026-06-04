@@ -7,8 +7,13 @@ import {
   MOCK_PORTFOLIO_CHART_3M,
   MOCK_PORTFOLIO_CHART_1Y,
 } from '@/data/mockData'
-import { Skeleton } from '@/components/ui/Skeleton'
+import { SkeletonChart } from '@/components/ui/Skeleton'
 import { cn } from '@/lib/utils'
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Portfolio Chart — Premium recharts card
+   Stripe-quality tooltip, clean axis, elegant area gradient
+═══════════════════════════════════════════════════════════════════════════ */
 
 interface PortfolioChartProps { loading?: boolean }
 
@@ -31,52 +36,82 @@ const RANGE_LABEL: Record<TimeRange, string> = {
   '1Y': 'Last 12 months',
 }
 
+/* ── Custom Tooltip ── */
+function CustomTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
+  const val = payload[0]?.value
+  return (
+    <div className="bg-[var(--bg-3)] border border-[var(--border-3)] rounded-xl px-3 py-2.5 shadow-[var(--shadow-float)]">
+      <p className="text-[11px] text-[var(--text-3)] mb-1">{label}</p>
+      <p className="num text-[14px] font-semibold text-[var(--text-0)]">
+        ${new Intl.NumberFormat('en-US').format(Math.round(val))}
+      </p>
+    </div>
+  )
+}
+
 export function PortfolioChart({ loading }: PortfolioChartProps) {
   const [activeRange, setActiveRange] = useState<TimeRange>('1M')
 
-  if (loading) return (
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl p-5">
-      <Skeleton className="h-4 w-32 mb-4" />
-      <Skeleton className="h-48 w-full rounded-lg" />
-    </div>
-  )
+  if (loading) {
+    return (
+      <div className="rounded-xl p-5 bg-[var(--bg-2)] border border-[var(--border-2)]" style={{ boxShadow: 'var(--shadow-card)' }}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="space-y-1.5">
+            <div className="shimmer h-3.5 w-28 rounded-md" />
+            <div className="shimmer h-3 w-20 rounded-md" />
+          </div>
+          <div className="shimmer h-7 w-40 rounded-lg" />
+        </div>
+        <SkeletonChart height="h-48" />
+      </div>
+    )
+  }
 
   const data    = RANGE_DATA[activeRange]
   const latest  = data[data.length - 1]?.value ?? 0
   const first   = data[0]?.value ?? 0
   const gain    = latest - first
-  const gainPct = ((gain / first) * 100).toFixed(2)
+  const gainPct = ((gain / (first || 1)) * 100).toFixed(2)
+  const isPos   = gain >= 0
 
   return (
-    /* Level 2 card */
-    <div className="bg-white dark:bg-[#131D2E] border border-slate-200/80 dark:border-[var(--border)] rounded-xl p-5">
-      <div className="flex items-start justify-between mb-4">
+    <div
+      className="rounded-xl bg-[var(--bg-2)] border border-[var(--border-2)]"
+      style={{ boxShadow: 'var(--shadow-card)' }}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between px-5 py-4 border-b border-[var(--border-1)]">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--text-1)]">Portfolio Value</h3>
-          <p className="text-xs text-[var(--text-3)] mt-0.5">{RANGE_LABEL[activeRange]}</p>
+          <p className="text-[13px] font-semibold text-[var(--text-1)]">Portfolio Value</p>
+          <p className="text-[11px] text-[var(--text-3)] mt-0.5">{RANGE_LABEL[activeRange]}</p>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-2.5">
+          {/* Value + delta */}
           <div className="text-right">
-            <p className="text-lg font-bold text-[var(--text-1)] font-mono tabular-nums">
+            <p className="num text-[19px] font-bold text-[var(--text-0)] tracking-tight leading-none">
               ${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(latest)}
             </p>
-            <p className={cn('text-xs font-medium', gain >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
-              {gain >= 0 ? '+' : ''}{gainPct}% this period
+            <p className={cn(
+              'text-[12px] font-semibold mt-0.5',
+              isPos ? 'text-[var(--success-bright)]' : 'text-[var(--danger-bright)]'
+            )}>
+              {isPos ? '+' : ''}{gainPct}% this period
             </p>
           </div>
 
-          {/* Time-range pill group — Level 3 bg */}
-          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800/60 rounded-lg p-0.5">
+          {/* Time range pill group */}
+          <div className="flex items-center gap-0.5 bg-[var(--bg-3)] border border-[var(--border-2)] rounded-lg p-0.5">
             {TIME_RANGES.map(r => (
               <button
                 key={r}
                 type="button"
                 onClick={() => setActiveRange(r)}
                 className={cn(
-                  'text-xs px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                  'text-[11px] font-medium px-2.5 py-1 rounded-md transition-all duration-100 cursor-pointer',
                   r === activeRange
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-[var(--text-1)] font-medium shadow-sm'
+                    ? 'bg-[var(--bg-5)] text-[var(--text-1)] shadow-sm'
                     : 'text-[var(--text-3)] hover:text-[var(--text-2)]'
                 )}
               >
@@ -87,41 +122,53 @@ export function PortfolioChart({ loading }: PortfolioChartProps) {
         </div>
       </div>
 
-      {/* Chart — blue line + fill per spec */}
-      <div className="h-48">
+      {/* Chart */}
+      <div className="h-52 px-2 pt-4 pb-2">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 4, right: 0, left: -30, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
             <defs>
               <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.20} />
-                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                <stop offset="0%"   stopColor={isPos ? '#2563EB' : '#DC2626'} stopOpacity={0.18} />
+                <stop offset="100%" stopColor={isPos ? '#2563EB' : '#DC2626'} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid, #e2e8f0)" vertical={false} className="dark:[stroke:#1e293b] [stroke:#e2e8f0]" />
+
+            <CartesianGrid
+              strokeDasharray="0"
+              stroke="var(--chart-grid)"
+              vertical={false}
+            />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 10, fill: 'var(--text-3)' }}
-              axisLine={false} tickLine={false}
+              tick={{ fontSize: 10, fill: 'var(--chart-text)', fontFamily: 'Inter' }}
+              axisLine={false}
+              tickLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fontSize: 10, fill: 'var(--text-3)' }}
-              axisLine={false} tickLine={false}
+              tick={{ fontSize: 10, fill: 'var(--chart-text)', fontFamily: 'Inter' }}
+              axisLine={false}
+              tickLine={false}
               tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
             />
-            {/* Tooltip — Level 4 */}
             <Tooltip
-              contentStyle={{
-                background: '#0F172A',
-                border: '1px solid rgba(100,116,139,0.35)',
-                borderRadius: '10px',
-                fontSize: '12px',
-              }}
-              labelStyle={{ color: '#94a3b8' }}
-              formatter={(v) => [`$${new Intl.NumberFormat('en-US').format(Math.round(Number(v)))}`, 'Value']}
-              cursor={{ stroke: 'rgba(59,130,246,0.4)', strokeWidth: 1 }}
+              content={<CustomTooltip />}
+              cursor={{ stroke: 'var(--border-3)', strokeWidth: 1 }}
             />
-            <Area type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} fill="url(#portfolioGrad)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={isPos ? 'var(--accent)' : 'var(--danger)'}
+              strokeWidth={1.5}
+              fill="url(#portfolioGrad)"
+              dot={false}
+              activeDot={{
+                r: 3,
+                fill: isPos ? 'var(--accent-bright)' : 'var(--danger-bright)',
+                stroke: 'var(--bg-2)',
+                strokeWidth: 2,
+              }}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </div>

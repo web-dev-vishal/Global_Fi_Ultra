@@ -20,10 +20,15 @@ const NotFound   = lazy(() => import('@/pages/NotFound').then(m => ({ default: m
 
 function PageLoader() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100 dark:bg-[#0B1220]">
+    <div className="flex items-center justify-center min-h-screen bg-[var(--bg-0)]">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-        <p className="text-xs text-slate-500">Loading…</p>
+        <div className="relative w-8 h-8">
+          <div className="w-8 h-8 border-2 border-[var(--border-2)] border-t-[var(--accent)] rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-[var(--accent)] opacity-60" />
+          </div>
+        </div>
+        <p className="text-[12px] text-[var(--text-3)] font-medium tracking-wide">Loading…</p>
       </div>
     </div>
   )

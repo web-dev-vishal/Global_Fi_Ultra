@@ -1,11 +1,12 @@
 import React from 'react'
-import { TrendingUp, TrendingDown, Activity, BarChart2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Activity, BarChart2, DollarSign } from 'lucide-react'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { Sparkline } from '@/components/ui/Sparkline'
 import { cn } from '@/lib/utils'
 import type { StockData } from '@/types'
 import { MOCK_SPARKLINE } from '@/data/mockData'
 
+/* ── Formatters ── */
 function fmt(v?: number, dec = 2) {
   if (v === undefined || v === null || isNaN(v)) return '—'
   return new Intl.NumberFormat('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(v)
@@ -23,18 +24,50 @@ function fmtCompact(v?: number) {
   return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(v)
 }
 
-interface KPICardsProps {
-  stock?: StockData
-  loading?: boolean
-}
+interface KPICardsProps { stock?: StockData; loading?: boolean }
 
-// Per-card: top border accent + icon colour
+/* ── Card accent configs ── */
 const ACCENTS = [
-  { topBorder: 'border-t-blue-500',    iconColor: 'text-blue-600 dark:text-blue-400'      },
-  { topBorder: 'border-t-slate-500',   iconColor: 'text-slate-600 dark:text-slate-400'    },
-  { topBorder: 'border-t-emerald-500', iconColor: 'text-emerald-600 dark:text-emerald-400' },
-  { topBorder: 'border-t-violet-500',  iconColor: 'text-violet-600 dark:text-violet-400'  },
-  { topBorder: 'border-t-amber-500',   iconColor: 'text-amber-600 dark:text-amber-400'    },
+  {
+    label: 'Price',
+    icon: DollarSign,
+    accent: 'var(--accent)',
+    accentSubtle: 'var(--accent-subtle)',
+    accentBright: 'var(--accent-bright)',
+    glow: '0 0 20px rgba(37,99,235,0.12)',
+  },
+  {
+    label: 'Open',
+    icon: BarChart2,
+    accent: 'var(--text-3)',
+    accentSubtle: 'var(--bg-4)',
+    accentBright: 'var(--text-2)',
+    glow: 'none',
+  },
+  {
+    label: '52W High',
+    icon: TrendingUp,
+    accent: 'var(--success)',
+    accentSubtle: 'var(--success-subtle)',
+    accentBright: 'var(--success-bright)',
+    glow: '0 0 20px rgba(5,150,105,0.10)',
+  },
+  {
+    label: 'Volume',
+    icon: Activity,
+    accent: 'var(--warning)',
+    accentSubtle: 'var(--warning-subtle)',
+    accentBright: 'var(--warning-bright)',
+    glow: 'none',
+  },
+  {
+    label: 'P/E Ratio',
+    icon: BarChart2,
+    accent: 'var(--ai)',
+    accentSubtle: 'var(--ai-subtle)',
+    accentBright: 'var(--ai-bright)',
+    glow: 'none',
+  },
 ]
 
 export function KPICards({ stock, loading }: KPICardsProps) {
@@ -51,64 +84,116 @@ export function KPICards({ stock, loading }: KPICardsProps) {
 
   const cards = [
     {
-      label: stock?.symbol ?? 'Stock',
-      value: fmtUSD(stock?.price),
-      sub: fmtPct(stock?.changePercent),
-      subColor: pos ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400',
-      icon: pos ? TrendingUp : TrendingDown,
+      label:   stock?.symbol ?? 'Stock',
+      value:   fmtUSD(stock?.price),
+      sub:     fmtPct(stock?.changePercent),
+      subPos:  pos,
+      isPrice: true,
       sparkline: true,
-      showDelta: true,
-      deltaPos: pos,
     },
-    { label: 'Open',      value: fmtUSD(stock?.open),       sub: `Prev: ${fmtUSD(stock?.previousClose)}`, subColor: 'text-[var(--text-3)]', icon: BarChart2,  sparkline: false, showDelta: false, deltaPos: false },
-    { label: '52W High',  value: fmtUSD(stock?.week52High), sub: `Low: ${fmtUSD(stock?.week52Low)}`,      subColor: 'text-[var(--text-3)]', icon: TrendingUp, sparkline: false, showDelta: false, deltaPos: false },
-    { label: 'Volume',    value: fmtCompact(stock?.volume), sub: 'Today',                                  subColor: 'text-[var(--text-3)]', icon: Activity,   sparkline: false, showDelta: false, deltaPos: false },
-    { label: 'P/E Ratio', value: stock?.pe ? fmt(stock.pe) : '—', sub: `EPS: ${stock?.eps ? fmt(stock.eps) : '—'}`, subColor: 'text-[var(--text-3)]', icon: BarChart2, sparkline: false, showDelta: false, deltaPos: false },
+    {
+      label:   'Open',
+      value:   fmtUSD(stock?.open),
+      sub:     `Prev: ${fmtUSD(stock?.previousClose)}`,
+      subPos:  null,
+      isPrice: false,
+      sparkline: false,
+    },
+    {
+      label:   '52W High',
+      value:   fmtUSD(stock?.week52High),
+      sub:     `Low: ${fmtUSD(stock?.week52Low)}`,
+      subPos:  null,
+      isPrice: false,
+      sparkline: false,
+    },
+    {
+      label:   'Volume',
+      value:   fmtCompact(stock?.volume),
+      sub:     'Today',
+      subPos:  null,
+      isPrice: false,
+      sparkline: false,
+    },
+    {
+      label:   'P/E Ratio',
+      value:   stock?.pe ? fmt(stock.pe) : '—',
+      sub:     `EPS: ${stock?.eps ? fmt(stock.eps) : '—'}`,
+      subPos:  null,
+      isPrice: false,
+      sparkline: false,
+    },
   ]
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {cards.map((c, i) => {
-        const Icon   = c.icon
-        const accent = ACCENTS[i]
+        const acc = ACCENTS[i]
+        const Icon = acc.icon
+
         return (
-          /* Level 2 card with top accent border */
           <div
             key={i}
             className={cn(
-              'bg-white dark:bg-[#131D2E]',
-              'border border-slate-200/80 dark:border-[var(--border)]',
-              'border-t-2', accent.topBorder,
-              'rounded-xl p-4',
-              'hover:bg-slate-50 dark:hover:bg-[var(--bg-raised)] transition-colors'
+              'group relative rounded-xl p-4 overflow-hidden',
+              'bg-[var(--bg-2)] border border-[var(--border-2)]',
+              'hover:border-[var(--border-3)] hover:bg-[var(--bg-3)]',
+              'transition-all duration-150',
             )}
+            style={{ boxShadow: 'var(--shadow-card)' }}
           >
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-xs text-[var(--text-2)] font-medium">{c.label}</p>
-              <Icon className={cn('h-4 w-4 shrink-0 opacity-50', accent.iconColor)} aria-hidden="true" />
+            {/* Top accent stripe */}
+            <div
+              className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl"
+              style={{ background: acc.accent, opacity: 0.7 }}
+            />
+
+            {/* Header row */}
+            <div className="flex items-start justify-between mb-3">
+              <p className="text-[11px] font-medium text-[var(--text-3)] tracking-wide uppercase leading-none">
+                {c.label}
+              </p>
+              <div
+                className="flex items-center justify-center w-6 h-6 rounded-lg"
+                style={{ background: acc.accentSubtle }}
+              >
+                <Icon
+                  className="h-3.5 w-3.5"
+                  style={{ color: acc.accentBright }}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
 
-            <p className="text-xl font-bold text-[var(--text-1)] font-mono tabular-nums mb-1">
+            {/* Primary value */}
+            <p className={cn(
+              'num text-[19px] font-bold text-[var(--text-0)] tracking-tight leading-none mb-2',
+            )}>
               {c.value}
             </p>
 
-            {c.showDelta ? (
+            {/* Sub-value / delta badge */}
+            {c.isPrice && c.subPos !== null ? (
               <span className={cn(
-                'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-medium',
-                c.deltaPos
-                  ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
-                  : 'bg-red-500/10 text-red-700 dark:text-red-400'
+                'inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-semibold leading-none',
+                c.subPos
+                  ? 'bg-[var(--success-subtle)] text-[var(--success-bright)]'
+                  : 'bg-[var(--danger-subtle)]  text-[var(--danger-bright)]'
               )}>
-                {c.deltaPos ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                {c.subPos
+                  ? <TrendingUp  className="h-2.5 w-2.5" />
+                  : <TrendingDown className="h-2.5 w-2.5" />
+                }
                 {c.sub}
               </span>
             ) : (
-              <p className={cn('text-xs', c.subColor)}>{c.sub}</p>
+              <p className="text-[11px] text-[var(--text-3)] leading-none">{c.sub}</p>
             )}
 
+            {/* Sparkline */}
             {c.sparkline && (
-              <div className="mt-2 -mx-1">
-                <Sparkline data={MOCK_SPARKLINE} positive={sparkPos} height={36} />
+              <div className="mt-3 -mx-0.5">
+                <Sparkline data={MOCK_SPARKLINE} positive={sparkPos} height={32} />
               </div>
             )}
           </div>

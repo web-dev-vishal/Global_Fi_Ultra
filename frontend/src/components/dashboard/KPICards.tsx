@@ -4,7 +4,13 @@ import { SkeletonCard } from '@/components/ui/Skeleton'
 import { Sparkline } from '@/components/ui/Sparkline'
 import { cn } from '@/lib/utils'
 import type { StockData } from '@/types'
-import { MOCK_SPARKLINE } from '@/data/mockData'
+import {
+  MOCK_SPARKLINE,
+  MOCK_SPARKLINE_OPEN,
+  MOCK_SPARKLINE_52W,
+  MOCK_SPARKLINE_VOLUME,
+  MOCK_SPARKLINE_PE,
+} from '@/data/mockData'
 
 /* ── Formatters ── */
 function fmt(v?: number, dec = 2) {
@@ -24,50 +30,54 @@ function fmtCompact(v?: number) {
   return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(v)
 }
 
+/* Return true when the last point > first point */
+function isPositive(data: { t: number; v: number }[]) {
+  return (data[data.length - 1]?.v ?? 0) > (data[0]?.v ?? 0)
+}
+
 interface KPICardsProps { stock?: StockData; loading?: boolean }
 
-/* ── Card accent configs ── */
+/* ── Per-card accent + sparkline config ── */
 const ACCENTS = [
   {
-    label: 'Price',
     icon: DollarSign,
     accent: 'var(--accent)',
     accentSubtle: 'var(--accent-subtle)',
     accentBright: 'var(--accent-bright)',
-    glow: '0 0 20px rgba(37,99,235,0.12)',
   },
   {
-    label: 'Open',
     icon: BarChart2,
     accent: 'var(--text-3)',
     accentSubtle: 'var(--bg-4)',
     accentBright: 'var(--text-2)',
-    glow: 'none',
   },
   {
-    label: '52W High',
     icon: TrendingUp,
     accent: 'var(--success)',
     accentSubtle: 'var(--success-subtle)',
     accentBright: 'var(--success-bright)',
-    glow: '0 0 20px rgba(5,150,105,0.10)',
   },
   {
-    label: 'Volume',
     icon: Activity,
     accent: 'var(--warning)',
     accentSubtle: 'var(--warning-subtle)',
     accentBright: 'var(--warning-bright)',
-    glow: 'none',
   },
   {
-    label: 'P/E Ratio',
     icon: BarChart2,
     accent: 'var(--ai)',
     accentSubtle: 'var(--ai-subtle)',
     accentBright: 'var(--ai-bright)',
-    glow: 'none',
   },
+]
+
+/* One sparkline dataset per card — deterministic, no random on re-render */
+const SPARKLINES = [
+  MOCK_SPARKLINE,
+  MOCK_SPARKLINE_OPEN,
+  MOCK_SPARKLINE_52W,
+  MOCK_SPARKLINE_VOLUME,
+  MOCK_SPARKLINE_PE,
 ]
 
 export function KPICards({ stock, loading }: KPICardsProps) {
@@ -79,57 +89,53 @@ export function KPICards({ stock, loading }: KPICardsProps) {
     )
   }
 
-  const pos      = (stock?.changePercent ?? 0) >= 0
-  const sparkPos = (MOCK_SPARKLINE[MOCK_SPARKLINE.length - 1]?.v ?? 0) > (MOCK_SPARKLINE[0]?.v ?? 0)
+  const pos = (stock?.changePercent ?? 0) >= 0
 
   const cards = [
     {
-      label:   stock?.symbol ?? 'Stock',
-      value:   fmtUSD(stock?.price),
-      sub:     fmtPct(stock?.changePercent),
-      subPos:  pos,
+      label:  stock?.symbol ?? 'Stock',
+      value:  fmtUSD(stock?.price),
+      sub:    fmtPct(stock?.changePercent),
       isPrice: true,
-      sparkline: true,
+      subPos: pos,
     },
     {
-      label:   'Open',
-      value:   fmtUSD(stock?.open),
-      sub:     `Prev: ${fmtUSD(stock?.previousClose)}`,
-      subPos:  null,
+      label:  'Open',
+      value:  fmtUSD(stock?.open),
+      sub:    `Prev: ${fmtUSD(stock?.previousClose)}`,
       isPrice: false,
-      sparkline: false,
+      subPos: null,
     },
     {
-      label:   '52W High',
-      value:   fmtUSD(stock?.week52High),
-      sub:     `Low: ${fmtUSD(stock?.week52Low)}`,
-      subPos:  null,
+      label:  '52W High',
+      value:  fmtUSD(stock?.week52High),
+      sub:    `Low: ${fmtUSD(stock?.week52Low)}`,
       isPrice: false,
-      sparkline: false,
+      subPos: null,
     },
     {
-      label:   'Volume',
-      value:   fmtCompact(stock?.volume),
-      sub:     'Today',
-      subPos:  null,
+      label:  'Volume',
+      value:  fmtCompact(stock?.volume),
+      sub:    'Today',
       isPrice: false,
-      sparkline: false,
+      subPos: null,
     },
     {
-      label:   'P/E Ratio',
-      value:   stock?.pe ? fmt(stock.pe) : '—',
-      sub:     `EPS: ${stock?.eps ? fmt(stock.eps) : '—'}`,
-      subPos:  null,
+      label:  'P/E Ratio',
+      value:  stock?.pe ? fmt(stock.pe) : '—',
+      sub:    `EPS: ${stock?.eps ? fmt(stock.eps) : '—'}`,
       isPrice: false,
-      sparkline: false,
+      subPos: null,
     },
   ]
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
       {cards.map((c, i) => {
-        const acc = ACCENTS[i]
-        const Icon = acc.icon
+        const acc        = ACCENTS[i]
+        const Icon       = acc.icon
+        const sparkData  = SPARKLINES[i]
+        const sparkPos   = isPositive(sparkData)
 
         return (
           <div
@@ -166,9 +172,7 @@ export function KPICards({ stock, loading }: KPICardsProps) {
             </div>
 
             {/* Primary value */}
-            <p className={cn(
-              'num text-[19px] font-bold text-[var(--text-0)] tracking-tight leading-none mb-2',
-            )}>
+            <p className="num text-[19px] font-bold text-[var(--text-0)] tracking-tight leading-none mb-2">
               {c.value}
             </p>
 
@@ -181,7 +185,7 @@ export function KPICards({ stock, loading }: KPICardsProps) {
                   : 'bg-[var(--danger-subtle)]  text-[var(--danger-bright)]'
               )}>
                 {c.subPos
-                  ? <TrendingUp  className="h-2.5 w-2.5" />
+                  ? <TrendingUp   className="h-2.5 w-2.5" />
                   : <TrendingDown className="h-2.5 w-2.5" />
                 }
                 {c.sub}
@@ -190,12 +194,10 @@ export function KPICards({ stock, loading }: KPICardsProps) {
               <p className="text-[11px] text-[var(--text-3)] leading-none">{c.sub}</p>
             )}
 
-            {/* Sparkline */}
-            {c.sparkline && (
-              <div className="mt-3 -mx-0.5">
-                <Sparkline data={MOCK_SPARKLINE} positive={sparkPos} height={32} />
-              </div>
-            )}
+            {/* Sparkline — every card gets one */}
+            <div className="mt-3 -mx-0.5">
+              <Sparkline data={sparkData} positive={sparkPos} height={32} />
+            </div>
           </div>
         )
       })}

@@ -128,9 +128,35 @@ export const MOCK_HEALTH: MockHealthStatus = {
 }
 
 // ─── Chart sparkline data ─────────────────────────────────────────────────────
+
+// Card 0 — Stock price (upward trend)
 export const MOCK_SPARKLINE = Array.from({ length: 24 }, (_, i) => ({
   t: i,
-  v: 67000 + Math.sin(i * 0.4) * 1500 + (Math.random() - 0.5) * 500,
+  v: 67000 + Math.sin(i * 0.4) * 1500 + i * 60,
+}))
+
+// Card 1 — Open / Prev close (steady with slight dip)
+export const MOCK_SPARKLINE_OPEN = Array.from({ length: 24 }, (_, i) => ({
+  t: i,
+  v: 187 + Math.sin(i * 0.6 + 1) * 1.2 - i * 0.04,
+}))
+
+// Card 2 — 52W High (strong upward, bullish)
+export const MOCK_SPARKLINE_52W = Array.from({ length: 24 }, (_, i) => ({
+  t: i,
+  v: 155 + i * 2.1 + Math.sin(i * 0.3) * 3,
+}))
+
+// Card 3 — Volume (spiky bar-like pattern)
+export const MOCK_SPARKLINE_VOLUME = Array.from({ length: 24 }, (_, i) => ({
+  t: i,
+  v: 40_000_000 + Math.abs(Math.sin(i * 0.9)) * 20_000_000 + (i % 4 === 0 ? 15_000_000 : 0),
+}))
+
+// Card 4 — P/E Ratio (gradually declining — cheaper over time)
+export const MOCK_SPARKLINE_PE = Array.from({ length: 24 }, (_, i) => ({
+  t: i,
+  v: 34 - i * 0.12 + Math.sin(i * 0.5) * 0.8,
 }))
 
 export const MOCK_PORTFOLIO_CHART = Array.from({ length: 30 }, (_, i) => ({

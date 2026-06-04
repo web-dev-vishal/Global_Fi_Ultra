@@ -82,7 +82,7 @@ export function UserTable({ users, loading, deletingId, onDelete }: UserTablePro
                 <td className="px-5 py-3">
                   <Button
                     variant="ghost" size="icon-sm"
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                    className="opacity-0 group-hover:opacity-100 text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-500/10 transition-all"
                     loading={deletingId === u._id}
                     onClick={() => onDelete(u._id, `${u.firstName} ${u.lastName}`)}
                     aria-label={`Delete ${u.firstName}`}

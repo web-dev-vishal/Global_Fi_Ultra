@@ -152,7 +152,7 @@ export function Watchlists() {
                       <Button variant="ghost" size="icon-sm" onClick={() => { setSelectedWL(wl); setAddOpen(true) }} aria-label="Add asset">
                         <Plus className="h-3.5 w-3.5" />
                       </Button>
-                      <Button variant="ghost" size="icon-sm" loading={deleting === wl._id} className="text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(wl._id, wl.name)} aria-label="Delete">
+                      <Button variant="ghost" size="icon-sm" loading={deleting === wl._id} className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(wl._id, wl.name)} aria-label="Delete">
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -163,7 +163,7 @@ export function Watchlists() {
                     {wl.assets.slice(0, 6).map(a => (
                       <div key={a.symbol} className="group/chip flex items-center gap-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-[var(--border)] rounded-full px-2 py-0.5 text-xs font-medium text-[var(--text-1)] transition-colors">
                         {a.symbol}
-                        <button onClick={() => handleRemoveAsset(wl._id, a.symbol)} className="opacity-0 group-hover/chip:opacity-100 transition-opacity text-[var(--text-3)] hover:text-red-400">
+                        <button onClick={() => handleRemoveAsset(wl._id, a.symbol)} className="opacity-0 group-hover/chip:opacity-100 transition-opacity text-[var(--text-3)] hover:text-red-600 dark:hover:text-red-400">
                           <X className="h-2.5 w-2.5" />
                         </button>
                       </div>

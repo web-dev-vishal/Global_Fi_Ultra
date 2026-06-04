@@ -164,7 +164,7 @@ export function Assets() {
                   <Button variant="ghost" size="icon-sm" loading={fetchingLive === a.symbol} onClick={() => handleLive(a.symbol)} aria-label="Fetch live price">
                     <TrendingUp className="h-3.5 w-3.5" />
                   </Button>
-                  <Button variant="ghost" size="icon-sm" loading={deleting === a.symbol} className="text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(a.symbol)} aria-label="Delete">
+                  <Button variant="ghost" size="icon-sm" loading={deleting === a.symbol} className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(a.symbol)} aria-label="Delete">
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>

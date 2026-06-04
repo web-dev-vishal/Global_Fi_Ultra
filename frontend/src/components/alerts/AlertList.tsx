@@ -98,7 +98,7 @@ export function AlertList({ alerts, loading, onDelete, onToggle, deletingId }: A
               )}
               <Button
                 variant="ghost" size="icon-sm"
-                className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-500/10"
                 loading={deletingId === a._id}
                 onClick={() => onDelete(a._id)}
                 aria-label="Delete alert"
